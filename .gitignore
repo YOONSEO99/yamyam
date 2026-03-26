@@ -1,4 +1,5 @@
 node_modules/
+<<<<<<< HEAD
 
 
 dist/
@@ -18,3 +19,9 @@ out-of-memory.log
 
 .DS_Store
 Thumbs.db
+=======
+.angular/
+dist/
+.env
+.DS_Store
+>>>>>>> dev
