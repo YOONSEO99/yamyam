@@ -1,0 +1,29 @@
+<nav class="navbar">
+  <div class="nav-inner">
+    <a routerLink="/" class="logo">
+      <span class="logo-yam">yam</span>yam
+    </a>
+    <div class="nav-links">
+      <a routerLink="/search" routerLinkActive="active">Find Classes</a>
+      <a routerLink="/users" routerLinkActive="active">Instructors</a>
+      @if (auth.isLoggedIn()) {
+        <a routerLink="/my-classes" routerLinkActive="active">My Classes</a>
+        <a routerLink="/favourites" routerLinkActive="active">Favourites</a>
+      }
+    </div>
+    <div class="nav-actions">
+      @if (auth.isLoggedIn()) {
+        @if (auth.isInstructor()) {
+          <a routerLink="/classes/new" class="btn-primary">+ New Class</a>
+        }
+        <a routerLink="/profile" class="avatar avatar-sm">
+          {{ auth.currentUser()?.nickname?.charAt(0)?.toUpperCase() }}
+        </a>
+        <button class="btn-ghost" (click)="auth.logout()">Log out</button>
+      } @else {
+        <a routerLink="/login" class="btn-ghost">Log in</a>
+        <a routerLink="/register" class="btn-primary">Sign up</a>
+      }
+    </div>
+  </div>
+</nav>

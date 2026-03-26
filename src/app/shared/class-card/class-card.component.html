@@ -1,0 +1,21 @@
+<a [routerLink]="['/classes', class._id]" class="class-card">
+  <div class="card-thumb" [style.background]="thumbBg">
+    <span class="cat-pin">{{ class.category }}</span>
+    <button class="heart-btn" (click)="onFavourite($event)" [class.on]="class.isFavourited">
+      {{ class.isFavourited ? '♥' : '♡' }}
+    </button>
+  </div>
+  <div class="card-body">
+    <div class="card-cat">{{ class.category }}</div>
+    <h3 class="card-title">{{ class.title }}</h3>
+    <div class="card-footer">
+      <div class="instructor">
+        <span class="avatar avatar-xs">{{ initials }}</span>
+        <span class="inst-name">{{ class.creator?.nickname }}</span>
+      </div>
+      @if (class.rating) {
+        <span class="star-rating">★ {{ class.rating | number:'1.1-1' }}</span>
+      }
+    </div>
+  </div>
+</a>

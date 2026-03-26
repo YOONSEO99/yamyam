@@ -1,0 +1,11 @@
+<div class="cat-bar">
+  @for (cat of categories; track cat.label) {
+    <button
+      class="cat-item"
+      [class.active]="active() === cat.label"
+      (click)="select(cat.label)">
+      <span class="cat-emoji">{{ cat.emoji }}</span>
+      <span class="cat-label">{{ cat.label }}</span>
+    </button>
+  }
+</div>

@@ -1,0 +1,29 @@
+<div class="carousel">
+  <div class="slides-track">
+    @for (slide of slides; track slide.id) {
+      <div class="slide" [class.active]="current() === slide.id" [class]="slide.bgClass">
+        <div class="slide-badge">{{ slide.badge }}</div>
+        <div class="slide-emoji">{{ slide.emoji }}</div>
+        <div class="slide-content">
+          <div class="slide-cat">{{ slide.category }}</div>
+          <h3 class="slide-title">{{ slide.title }}</h3>
+          <p class="slide-sub">{{ slide.subtitle }}</p>
+          <button class="slide-cta">{{ slide.cta }} →</button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="carousel-controls">
+    <div class="counter">{{ current() + 1 }} / {{ slides.length }}</div>
+    <div class="dots">
+      @for (slide of slides; track slide.id; let i = $index) {
+        <button class="dot" [class.on]="current() === i" (click)="goTo(i)"></button>
+      }
+    </div>
+    <div class="arrows">
+      <button class="arrow" (click)="prev()">‹</button>
+      <button class="arrow" (click)="next()">›</button>
+    </div>
+  </div>
+</div>

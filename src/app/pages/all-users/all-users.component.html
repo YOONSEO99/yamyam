@@ -1,0 +1,16 @@
+<div class="page-wrapper">
+  <div class="container">
+    <h1 class="page-title">Instructors</h1>
+    <p class="page-sub">Meet the experts behind yamyam's classes</p>
+    <div class="users-grid">
+      @for (user of users(); track user._id) {
+        <div class="user-card card">
+          <div class="user-avatar avatar avatar-lg">{{ user.nickname.charAt(0) }}</div>
+          <div class="user-name">{{ user.nickname }}</div>
+          <div class="user-role badge badge-yam">{{ user.role }}</div>
+          <p class="user-bio">{{ user.bio }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

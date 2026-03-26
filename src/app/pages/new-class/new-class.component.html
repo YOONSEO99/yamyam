@@ -1,0 +1,58 @@
+<div class="page-wrapper">
+  <div class="container form-page">
+    <div class="form-header">
+      <h1>Create a New Class</h1>
+      <p>Share your expertise with students worldwide</p>
+    </div>
+
+    <div class="card form-card">
+      <div class="form-group">
+        <label for="title">Class Title *</label>
+        <input id="title" type="text" [(ngModel)]="form.title" placeholder="e.g. React 19 Complete Bootcamp" />
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category *</label>
+        <select id="category" [(ngModel)]="form.category">
+          <option value="" disabled>Select a category</option>
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="desc">Description</label>
+        <textarea id="desc" [(ngModel)]="form.description" rows="5" placeholder="Describe what students will learn..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Thumbnail</label>
+        <div class="upload-zone">
+          <div class="upload-icon">📁</div>
+          <p>Drag & drop or <span>browse</span></p>
+          <span class="upload-hint">PNG, JPG up to 5MB</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Status</label>
+        <div class="radio-group">
+          <label class="radio-opt">
+            <input type="radio" [(ngModel)]="form.status" value="draft" /> Draft
+          </label>
+          <label class="radio-opt">
+            <input type="radio" [(ngModel)]="form.status" value="published" /> Published
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-ghost" (click)="submit()">Save as Draft</button>
+        <button class="btn-primary" (click)="submit()" [disabled]="saving()">
+          {{ saving() ? 'Creating...' : 'Create Class' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+.page-title { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+.page-sub { color: var(--text-secondary); margin-bottom: 28px; }
+.users-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.user-card { padding: 28px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+.user-avatar.avatar-lg { width: 60px; height: 60px; font-size: 22px; }
+.user-name { font-size: 16px; font-weight: 700; }
+.user-bio { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }

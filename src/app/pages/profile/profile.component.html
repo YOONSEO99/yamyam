@@ -1,0 +1,38 @@
+<div class="page-wrapper">
+  <div class="container profile-layout">
+    <div class="profile-card card">
+      <div class="profile-hero">
+        <div class="avatar avatar-xl">{{ form.nickname.charAt(0) }}</div>
+        <div class="profile-info">
+          <h1>{{ form.nickname }}</h1>
+          <p class="profile-email">{{ form.email }}</p>
+          <span class="badge badge-yam">{{ auth.currentUser()?.role ?? 'student' }}</span>
+        </div>
+        <button class="btn-outline" (click)="editing.set(!editing())">
+          {{ editing() ? 'Cancel' : '✎ Edit Profile' }}
+        </button>
+      </div>
+
+      @if (!editing()) {
+        <div class="bio-section">
+          <h2>About</h2>
+          <p>{{ form.bio }}</p>
+        </div>
+      } @else {
+        <div class="edit-form">
+          <div class="form-group">
+            <label>Display Name</label>
+            <input type="text" [(ngModel)]="form.nickname" />
+          </div>
+          <div class="form-group">
+            <label>Bio</label>
+            <textarea [(ngModel)]="form.bio" rows="3"></textarea>
+          </div>
+          <button class="btn-primary" (click)="save()" [disabled]="saving()">
+            {{ saving() ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

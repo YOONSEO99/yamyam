@@ -1,0 +1,7 @@
+.profile-layout { max-width: 680px; }
+.profile-card { padding: 32px; }
+.profile-hero { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--gray-2); }
+.avatar-xl { width: 72px; height: 72px; font-size: 28px; }
+.profile-info { flex: 1; h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; } .profile-email { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; } }
+.bio-section { h2 { font-size: 15px; font-weight: 700; margin-bottom: 8px; } p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; } }
+.edit-form { display: flex; flex-direction: column; gap: 16px; button { width: fit-content; } }
