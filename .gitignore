@@ -1,27 +1,5 @@
 node_modules/
-<<<<<<< HEAD
-
-
-dist/
-tmp/
-out-of-memory.log
-
-
-.angular/
-
-
-.vscode/
-.idea/
-
-
-.env
-
-
-.DS_Store
-Thumbs.db
-=======
 .angular/
 dist/
 .env
 .DS_Store
->>>>>>> dev
