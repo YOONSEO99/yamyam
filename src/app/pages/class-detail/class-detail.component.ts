@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ClassService } from '../../services/class.service';
 import { MessageService } from '../../services/message.service';
 import { AuthService } from '../../services/auth.service';
-import { Class } from '../../models/class';
+import { Class } from '../../models/lesson';
 import { Message } from '../../models/message';
 
 @Component({
