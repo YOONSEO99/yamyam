@@ -6,7 +6,7 @@ import { ClassService } from '../../services/class.service';
 import { CarouselComponent } from '../../shared/carousel/carousel.component';
 import { CategoryBarComponent } from '../../shared/category-bar/category-bar.component';
 import { ClassCardComponent } from '../../shared/class-card/class-card.component';
-import { Class } from '../../models/class';
+import { Class } from '../../models/lesson';
 
 @Component({
   selector: 'app-home',

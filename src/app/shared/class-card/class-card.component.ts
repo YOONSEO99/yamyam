@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Class } from '../../models/class';
+import { Class } from '../../models/lesson';
 
 @Component({
   selector: 'app-class-card',

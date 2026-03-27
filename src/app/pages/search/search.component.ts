@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ClassService } from '../../services/class.service';
 import { ClassCardComponent } from '../../shared/class-card/class-card.component';
 import { CategoryBarComponent } from '../../shared/category-bar/category-bar.component';
-import { Class } from '../../models/class';
+import { Class } from '../../models/lesson';
 
 @Component({
   selector: 'app-search',

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Class } from '../models/class';
+import { Class } from '../models/lesson';
 
 @Injectable({ providedIn: 'root' })
 export class ClassService {
   private readonly API = 'http://localhost:3000/api/v1';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getClasses(keyword?: string, category?: string) {
     let params = new HttpParams();

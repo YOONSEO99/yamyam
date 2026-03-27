@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ClassCardComponent } from '../../shared/class-card/class-card.component';
-import { Class } from '../../models/class';
+import { Class } from '../../models/lesson';
 
 @Component({
   selector: 'app-favourites',
