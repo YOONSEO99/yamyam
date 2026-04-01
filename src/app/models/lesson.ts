@@ -1,6 +1,7 @@
 import { User } from './user';
 
 export interface Lesson {
+  isFavourited: any;
   _id: string;
   instructorId: string | User;
   title: string;
@@ -18,8 +19,11 @@ export interface Lesson {
   maxCapacity: number;
   currentBookings: number;
   price: number;
+  rating?: number;
+  studentsCount?: number;
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string;
+  status?: string;
 
 }

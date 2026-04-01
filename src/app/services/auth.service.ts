@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
-import { User, AuthResponse } from '../models/user';
+import { AuthResponse, User } from '../models/user';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
