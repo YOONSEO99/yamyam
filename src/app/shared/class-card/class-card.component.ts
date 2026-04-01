@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Class } from '../../models/lesson';
+import { Lesson } from '../../models/lesson';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-class-card',
@@ -11,11 +12,16 @@ import { Class } from '../../models/lesson';
   styleUrl: './class-card.component.scss'
 })
 export class ClassCardComponent {
-  @Input() class!: Class;
+  @Input() class!: Lesson;
   @Output() favouriteToggled = new EventEmitter<string>();
 
+  get instructor(): User | undefined {
+    const id = this.class.instructorId;
+    return typeof id === 'object' ? id : undefined;
+  }
+
   get initials() {
-    return this.class.creator?.nickname?.charAt(0)?.toUpperCase() ?? '?';
+    return this.instructor?.nickname?.charAt(0)?.toUpperCase() ?? '?';
   }
 
   get thumbBg() {

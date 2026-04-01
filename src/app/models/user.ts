@@ -5,11 +5,12 @@ export interface User {
   firstName: string;
   lastName: string;
   birthDate: string;
-  nickName?: string;
+  nickname?: string;
   avatarUrl?: string;
   bio?: string;
   isInstructor?: boolean;
   isAdmin?: boolean;
+  role?: string;
   favoriteLessonIds?: string[];
   createdAt?: string;
   updatedAt?: string;
@@ -17,11 +18,8 @@ export interface User {
 
 }
 
-
-
-// export interface AuthResponse {
-//   token: string;
-//   user: User;
-// }
-
+export interface AuthResponse {
+  token: string;
+  user: User;
+}
 

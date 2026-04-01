@@ -11,7 +11,7 @@
     <div class="card-footer">
       <div class="instructor">
         <span class="avatar avatar-xs">{{ initials }}</span>
-        <span class="inst-name">{{ class.creator?.nickname }}</span>
+        <span class="inst-name">{{ instructor?.nickname }}</span>
       </div>
       @if (class.rating) {
         <span class="star-rating">★ {{ class.rating | number:'1.1-1' }}</span>
