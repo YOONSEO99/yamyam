@@ -1,14 +1,25 @@
 export interface User {
   _id: string;
   email: string;
-  nickname: string;
+  password?: string;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+  nickname?: string;
   avatarUrl?: string;
   bio?: string;
-  role: 'student' | 'instructor';
-  createdAt: string;
+  isInstructor?: boolean;
+  isAdmin?: boolean;
+  role?: string;
+  favoriteLessonIds?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string;
+
 }
 
 export interface AuthResponse {
   token: string;
   user: User;
 }
+

@@ -3,7 +3,10 @@
     <div class="container detail-layout">
       <!-- MAIN -->
       <div class="main-col">
-        <div class="thumb-hero" [style.background]="'linear-gradient(135deg, #f0ebfa, #e4d8f8)'">
+        <div
+          class="thumb-hero"
+          [style.background]="'linear-gradient(135deg, #f0ebfa, #e4d8f8)'"
+        >
           <span class="cat-badge">{{ c.category }}</span>
         </div>
 
@@ -12,11 +15,15 @@
             <h1 class="class-title">{{ c.title }}</h1>
             <div class="class-meta">
               <div class="instructor-row">
-                <span class="avatar avatar-sm">{{ c.creator?.nickname?.charAt(0) }}</span>
-                <span class="inst-name">{{ c.creator?.nickname }}</span>
+                <span class="avatar avatar-sm">{{
+                  instructorFromLesson(c)?.nickname?.charAt(0)
+                }}</span>
+                <span class="inst-name">{{ instructorFromLesson(c)?.nickname }}</span>
               </div>
               @if (c.rating) {
-                <span class="star-rating">★ {{ c.rating | number:'1.1-1' }}</span>
+                <span class="star-rating"
+                  >★ {{ c.rating | number: "1.1-1" }}</span
+                >
               }
               <span class="students">{{ c.studentsCount }} students</span>
             </div>
@@ -30,12 +37,18 @@
           </div>
 
           <div class="action-row">
-            <button class="fav-btn" [class.on]="c.isFavourited" (click)="toggleFavourite()">
-              {{ c.isFavourited ? '♥' : '♡' }}
-              {{ c.isFavourited ? 'Saved' : 'Save class' }}
+            <button
+              class="fav-btn"
+              [class.on]="c.isFavourited"
+              (click)="toggleFavourite()"
+            >
+              {{ c.isFavourited ? "♥" : "♡" }}
+              {{ c.isFavourited ? "Saved" : "Save class" }}
             </button>
             @if (isOwner) {
-              <a [routerLink]="['/classes', c._id, 'edit']" class="btn-outline">✎ Edit Class</a>
+              <a [routerLink]="['/classes', c._id, 'edit']" class="btn-outline"
+                >✎ Edit Class</a
+              >
             }
           </div>
         </div>
@@ -47,13 +60,18 @@
         <div class="card instructor-card">
           <h3 class="side-title">Instructor</h3>
           <div class="inst-profile">
-            <span class="avatar avatar-lg">{{ c.creator?.nickname?.charAt(0) }}</span>
+            <span class="avatar avatar-lg">{{
+              instructorFromLesson(c)?.nickname?.charAt(0)
+            }}</span>
             <div>
-              <div class="inst-full-name">{{ c.creator?.nickname }}</div>
+              <div class="inst-full-name">{{ instructorFromLesson(c)?.nickname }}</div>
               <div class="inst-role">Verified Instructor</div>
             </div>
           </div>
-          <p class="inst-bio">Senior developer with 10+ years of experience. Helped over 3,000 students land their first developer jobs.</p>
+          <p class="inst-bio">
+            Senior developer with 10+ years of experience. Helped over 3,000
+            students land their first developer jobs.
+          </p>
         </div>
 
         <!-- Messages -->
@@ -62,8 +80,10 @@
           <div class="message-thread">
             @for (msg of messages(); track msg._id) {
               <div class="msg-row" [class.mine]="msg.senderId === 'me'">
-                @if (msg.senderId !== 'me') {
-                  <span class="avatar avatar-xs">{{ msg.sender?.nickname?.charAt(0) }}</span>
+                @if (msg.senderId !== "me") {
+                  <span class="avatar avatar-xs">{{
+                    senderUser(msg.senderId)?.nickname?.charAt(0)
+                  }}</span>
                 }
                 <div class="msg-bubble-wrap">
                   <div class="msg-bubble">{{ msg.content }}</div>
