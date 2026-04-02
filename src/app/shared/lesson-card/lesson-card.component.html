@@ -1,0 +1,25 @@
+<a [routerLink]="['/lessons', lesson._id]" class="lesson-card">
+  <div class="card-thumb" [style.background]="thumbBg">
+    <span class="cat-pin">{{ lesson.category }}</span>
+    <button
+      class="heart-btn"
+      (click)="onFavourite($event)"
+      [class.on]="lesson.isFavourited"
+    >
+      {{ lesson.isFavourited ? "♥" : "♡" }}
+    </button>
+  </div>
+  <div class="card-body">
+    <div class="card-cat">{{ lesson.category }}</div>
+    <h3 class="card-title">{{ lesson.title }}</h3>
+    <div class="card-footer">
+      <div class="instructor">
+        <span class="avatar avatar-xs">{{ initials }}</span>
+        <span class="inst-name">{{ instructor?.nickname }}</span>
+      </div>
+      @if (lesson.rating) {
+        <span class="star-rating">★ {{ lesson.rating | number: "1.1-1" }}</span>
+      }
+    </div>
+  </div>
+</a>

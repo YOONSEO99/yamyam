@@ -1,0 +1,117 @@
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+  }
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--gray-1);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  .stat-n {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--yam);
+  }
+  .stat-l {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+}
+
+.tab-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--gray-2);
+  margin-bottom: 24px;
+  button {
+    padding: 11px 22px;
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+    &.active {
+      color: var(--yam);
+      border-bottom-color: var(--yam);
+    }
+    &:hover:not(.active) {
+      color: var(--text-primary);
+    }
+  }
+}
+
+.class-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.class-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+}
+.class-thumb {
+  width: 64px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.class-row-info {
+  flex: 1;
+  .class-row-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .class-row-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+.class-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  .empty-icon {
+    font-size: 40px;
+    margin-bottom: 14px;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  p {
+    color: var(--text-secondary);
+    margin-bottom: 18px;
+  }
+}

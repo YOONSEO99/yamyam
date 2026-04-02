@@ -1,5 +1,5 @@
 <div class="page-wrapper">
-  @if (cls(); as c) {
+  @if (lesson(); as l) {
     <div class="container detail-layout">
       <!-- MAIN -->
       <div class="main-col">
@@ -7,25 +7,27 @@
           class="thumb-hero"
           [style.background]="'linear-gradient(135deg, #f0ebfa, #e4d8f8)'"
         >
-          <span class="cat-badge">{{ c.category }}</span>
+          <span class="cat-badge">{{ l.category }}</span>
         </div>
 
         <div class="class-info card">
           <div class="class-header">
-            <h1 class="class-title">{{ c.title }}</h1>
+            <h1 class="class-title">{{ l.title }}</h1>
             <div class="class-meta">
               <div class="instructor-row">
                 <span class="avatar avatar-sm">{{
-                  instructorFromLesson(c)?.nickname?.charAt(0)
+                  instructorFromLesson(l)?.nickname?.charAt(0)
                 }}</span>
-                <span class="inst-name">{{ instructorFromLesson(c)?.nickname }}</span>
+                <span class="inst-name">{{
+                  instructorFromLesson(l)?.nickname
+                }}</span>
               </div>
-              @if (c.rating) {
+              @if (l.rating) {
                 <span class="star-rating"
-                  >★ {{ c.rating | number: "1.1-1" }}</span
+                  >★ {{ l.rating | number: "1.1-1" }}</span
                 >
               }
-              <span class="students">{{ c.studentsCount }} students</span>
+              <span class="students">{{ l.studentsCount }} students</span>
             </div>
           </div>
 
@@ -33,21 +35,21 @@
 
           <div class="description-section">
             <h2>About this class</h2>
-            <p class="description">{{ c.description }}</p>
+            <p class="description">{{ l.description }}</p>
           </div>
 
           <div class="action-row">
             <button
               class="fav-btn"
-              [class.on]="c.isFavourited"
+              [class.on]="l.isFavourited"
               (click)="toggleFavourite()"
             >
-              {{ c.isFavourited ? "♥" : "♡" }}
-              {{ c.isFavourited ? "Saved" : "Save class" }}
+              {{ l.isFavourited ? "♥" : "♡" }}
+              {{ l.isFavourited ? "Saved" : "Save class" }}
             </button>
             @if (isOwner) {
-              <a [routerLink]="['/classes', c._id, 'edit']" class="btn-outline"
-                >✎ Edit Class</a
+              <a [routerLink]="['/lessons', l._id, 'edit']" class="btn-outline"
+                >✎ Edit Lesson</a
               >
             }
           </div>
@@ -61,10 +63,12 @@
           <h3 class="side-title">Instructor</h3>
           <div class="inst-profile">
             <span class="avatar avatar-lg">{{
-              instructorFromLesson(c)?.nickname?.charAt(0)
+              instructorFromLesson(l)?.nickname?.charAt(0)
             }}</span>
             <div>
-              <div class="inst-full-name">{{ instructorFromLesson(c)?.nickname }}</div>
+              <div class="inst-full-name">
+                {{ instructorFromLesson(l)?.nickname }}
+              </div>
               <div class="inst-role">Verified Instructor</div>
             </div>
           </div>

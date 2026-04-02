@@ -5,18 +5,18 @@ import { Lesson } from '../../models/lesson';
 import { User } from '../../models/user';
 
 @Component({
-  selector: 'app-class-card',
+  selector: 'app-lesson-card',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './class-card.component.html',
-  styleUrl: './class-card.component.scss'
+  templateUrl: './lesson-card.component.html',
+  styleUrl: './lesson-card.component.scss'
 })
-export class ClassCardComponent {
-  @Input() class!: Lesson;
+export class LessonCardComponent {
+  @Input() lesson!: Lesson;
   @Output() favouriteToggled = new EventEmitter<string>();
 
   get instructor(): User | undefined {
-    const id = this.class.instructorId;
+    const id = this.lesson.instructorId;
     return typeof id === 'object' ? id : undefined;
   }
 
@@ -31,12 +31,12 @@ export class ClassCardComponent {
       'Photo·Video': '#fff0eb', 'Language': '#edf8ff',
       'Music': '#fbeaff', 'Cooking': '#fff3e0',
     };
-    return cats[this.class.category] ?? '#f5f2fa';
+    return cats[this.lesson.category] ?? '#f5f2fa';
   }
 
   onFavourite(e: Event) {
     e.preventDefault();
     e.stopPropagation();
-    this.favouriteToggled.emit(this.class._id);
+    this.favouriteToggled.emit(this.lesson._id);
   }
 }
