@@ -1,21 +1,27 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Class } from '../../models/class';
+import { Lesson } from '../../models/lesson';
+import { User } from '../../models/user';
 
 @Component({
-  selector: 'app-class-card',
+  selector: 'app-lesson-card',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './class-card.component.html',
-  styleUrl: './class-card.component.scss'
+  templateUrl: './lesson-card.component.html',
+  styleUrl: './lesson-card.component.scss'
 })
-export class ClassCardComponent {
-  @Input() class!: Class;
+export class LessonCardComponent {
+  @Input() lesson!: Lesson;
   @Output() favouriteToggled = new EventEmitter<string>();
 
+  get instructor(): User | undefined {
+    const id = this.lesson.instructorId;
+    return typeof id === 'object' ? id : undefined;
+  }
+
   get initials() {
-    return this.class.creator?.nickname?.charAt(0)?.toUpperCase() ?? '?';
+    return this.instructor?.nickname?.charAt(0)?.toUpperCase() ?? '?';
   }
 
   get thumbBg() {
@@ -25,12 +31,12 @@ export class ClassCardComponent {
       'Photo·Video': '#fff0eb', 'Language': '#edf8ff',
       'Music': '#fbeaff', 'Cooking': '#fff3e0',
     };
-    return cats[this.class.category] ?? '#f5f2fa';
+    return cats[this.lesson.category] ?? '#f5f2fa';
   }
 
   onFavourite(e: Event) {
     e.preventDefault();
     e.stopPropagation();
-    this.favouriteToggled.emit(this.class._id);
+    this.favouriteToggled.emit(this.lesson._id);
   }
 }

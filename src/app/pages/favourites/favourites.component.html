@@ -1,18 +1,21 @@
 <div class="page-wrapper">
   <div class="container">
-    <h1 class="page-title">Saved Classes</h1>
-    @if (classes().length > 0) {
+    <h1 class="page-title">Saved Lessons</h1>
+    @if (lessons().length > 0) {
       <div class="cards-grid">
-        @for (c of classes(); track c._id) {
-          <app-class-card [class]="c" (favouriteToggled)="onFavouriteToggled($event)" />
+        @for (l of lessons(); track l._id) {
+          <app-lesson-card
+            [lesson]="l"
+            (favouriteToggled)="onFavouriteToggled($event)"
+          />
         }
       </div>
     } @else {
       <div class="empty-state">
         <div class="empty-icon">♡</div>
         <h3>Nothing saved yet</h3>
-        <p>Tap the heart on any class to save it here</p>
-        <a routerLink="/search" class="btn-primary">Browse Classes</a>
+        <p>Tap the heart on any lesson to save it here</p>
+        <a routerLink="/search" class="btn-primary">Browse Lessons</a>
       </div>
     }
   </div>

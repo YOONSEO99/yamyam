@@ -1,0 +1,83 @@
+<div class="page-wrapper">
+  <div class="container">
+    <div class="dashboard-header">
+      <h1>My Dashboard</h1>
+      <a routerLink="/lessons/new" class="btn-primary">+ New Lesson</a>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-n">{{ stats.lessons }}</div>
+        <div class="stat-l">Lessons Created</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-n">{{ stats.students }}</div>
+        <div class="stat-l">Total Students</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-n">{{ stats.favourites }}</div>
+        <div class="stat-l">Times Favourited</div>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      <button
+        [class.active]="activeTab() === 'lessons'"
+        (click)="activeTab.set('lessons')"
+      >
+        My Lessons
+      </button>
+      <button
+        [class.active]="activeTab() === 'favourites'"
+        (click)="activeTab.set('favourites')"
+      >
+        Saved Lessons
+      </button>
+      <button
+        [class.active]="activeTab() === 'messages'"
+        (click)="activeTab.set('messages')"
+      >
+        Messages
+      </button>
+    </div>
+
+    @if (activeTab() === "lessons") {
+      <div class="lesson-list">
+        @for (l of myLessons; track l._id) {
+          <div class="lesson-row card">
+            <div class="lesson-thumb" [style.background]="'var(--yam-light)'">
+              <span
+                style="
+                  font-size: 11px;
+                  color: var(--yam);
+                  font-family: monospace;
+                "
+                >{{ l.category }}</span
+              >
+            </div>
+            <div class="lesson-row-info">
+              <div class="lesson-row-title">{{ l.title }}</div>
+              <div class="class-row-meta">
+                {{ l.studentsCount }} students
+                <span
+                  class="badge"
+                  [class.badge-success]="l.status === 'published'"
+                  [class.badge-draft]="l.status === 'draft'"
+                >
+                  {{ l.status }}
+                </span>
+              </div>
+            </div>
+            <div class="lesson-row-actions">
+              @if (l.rating) {
+                <span class="star-rating">★ {{ l.rating }}</span>
+              }
+              <a [routerLink]="['/lessons', l._id]" class="btn-ghost">View</a>
+              <a [routerLink]="['/lessons', l._id, 'edit']" class="btn-outline">Edit</a>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

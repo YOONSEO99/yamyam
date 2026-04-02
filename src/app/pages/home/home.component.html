@@ -2,7 +2,7 @@
   <!-- HERO SECTION -->
   <section class="hero">
     <div class="hero-left">
-      <div class="hero-eyebrow">Learn. Digest. Own it.</div>
+      <div class="hero-eyebrow">Learn. Digest. Master it.</div>
       <h1 class="hero-headline">
         <span class="line-1">Cheeeeeew</span>
         <span class="line-2">what you</span>
@@ -68,16 +68,16 @@
 
   <hr class="divider" />
 
-  <!-- CLASS CARDS -->
-  <section class="classes-section">
+  <!-- LESSON CARDS -->
+  <section class="lessons-section">
     <div class="section-header">
-      <h2 class="section-title">Popular Classes This Week</h2>
+      <h2 class="section-title">Popular Lessons This Week</h2>
       <a routerLink="/search" class="see-all">View all →</a>
     </div>
     <div class="cards-grid">
-      @for (c of classes(); track c._id) {
-        <app-class-card
-          [class]="c"
+      @for (l of lessons(); track l._id) {
+        <app-lesson-card
+          [lesson]="l"
           (favouriteToggled)="onFavouriteToggled($event)"
         />
       }
@@ -89,7 +89,7 @@
     <div class="cta-inner">
       <div class="cta-text">
         <h2>Ready to share your knowledge?</h2>
-        <p>Join hundreds of instructors earning on yamyam</p>
+        <p>Join hundreds of instructors earning on yourway</p>
       </div>
       <a routerLink="/register" class="btn-primary">Become an Instructor</a>
     </div>
