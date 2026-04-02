@@ -2,29 +2,29 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ClassService } from '../../services/class.service';
+import { LessonService } from '../../services/lesson.service';
 import { CarouselComponent } from '../../shared/carousel/carousel.component';
 import { CategoryBarComponent } from '../../shared/category-bar/category-bar.component';
-import { ClassCardComponent } from '../../shared/class-card/class-card.component';
+import { LessonCardComponent } from '../../shared/lesson-card/lesson-card.component';
 import { Lesson } from '../../models/lesson';
 import { lessonMock } from '../../data/lesson-mock';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, CarouselComponent, CategoryBarComponent, ClassCardComponent],
+  imports: [CommonModule, RouterLink, FormsModule, CarouselComponent, CategoryBarComponent, LessonCardComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-  private classService = inject(ClassService);
+  private lessonService = inject(LessonService);
   private router = inject(Router);
 
-  classes = signal<Lesson[]>([]);
+  lessons = signal<Lesson[]>([]);
   loading = signal(false);
   searchQuery = '';
 
-  mockClasses: Lesson[] = [
+  mockLessons: Lesson[] = [
     lessonMock({ _id: '1', title: 'React 19 + TypeScript Complete Bootcamp', description: '', category: 'IT·Dev', isFavourited: true, instructorId: 'u1', instructorNickname: 'MinJun Kim', rating: 4.9, studentsCount: 128, createdAt: '', updatedAt: '' }),
     lessonMock({ _id: '2', title: 'Figma UX/UI Design from Zero to Hero', description: '', category: 'Design', isFavourited: false, instructorId: 'u2', instructorNickname: 'Seo-Yeon Lee', rating: 4.8, studentsCount: 94, createdAt: '', updatedAt: '' }),
     lessonMock({ _id: '3', title: 'Node.js REST API — Build & Deploy', description: '', category: 'IT·Dev', isFavourited: false, instructorId: 'u3', instructorNickname: 'Jihoon Park', rating: 4.9, studentsCount: 112, createdAt: '', updatedAt: '' }),
@@ -36,7 +36,7 @@ export class HomeComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.classes.set(this.mockClasses);
+    this.lessons.set(this.mockLessons);
   }
 
   onSearch() {
@@ -49,9 +49,9 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/search'], { queryParams: { category: cat } });
   }
 
-  onFavouriteToggled(classId: string) {
-    this.classes.update(list =>
-      list.map(c => c._id === classId ? { ...c, isFavourited: !c.isFavourited } : c)
+  onFavouriteToggled(lessonId: string) {
+    this.lessons.update(list =>
+      list.map(l => l._id === lessonId ? { ...l, isFavourited: !l.isFavourited } : l)
     );
   }
 }

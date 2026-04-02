@@ -2,8 +2,8 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ClassService } from '../../services/class.service';
-import { ClassCardComponent } from '../../shared/class-card/class-card.component';
+import { LessonService } from '../../services/lesson.service';
+import { LessonCardComponent } from '../../shared/lesson-card/lesson-card.component';
 import { CategoryBarComponent } from '../../shared/category-bar/category-bar.component';
 import { Lesson } from '../../models/lesson';
 import { lessonMock } from '../../data/lesson-mock';
@@ -11,21 +11,21 @@ import { lessonMock } from '../../data/lesson-mock';
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, ClassCardComponent, CategoryBarComponent],
+  imports: [CommonModule, FormsModule, LessonCardComponent, CategoryBarComponent],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss'
 })
 export class SearchComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private classService = inject(ClassService);
+  private lessonService = inject(LessonService);
 
-  classes = signal<Lesson[]>([]);
+  lessons = signal<Lesson[]>([]);
   loading = signal(false);
   searchQuery = '';
   activeCategory = '';
   totalCount = signal(0);
 
-  mockClasses: Lesson[] = [
+  mockLessons: Lesson[] = [
     lessonMock({ _id: '1', title: 'React 19 + TypeScript Complete Bootcamp', description: 'Master modern React with TypeScript, hooks, signals, and real-world projects.', category: 'IT·Dev', isFavourited: true, instructorId: 'u1', instructorNickname: 'MinJun Kim', rating: 4.9, studentsCount: 128, createdAt: '', updatedAt: '' }),
     lessonMock({ _id: '2', title: 'Figma UX/UI Design from Zero to Hero', description: 'Learn Figma from scratch and build professional-grade UI design systems.', category: 'Design', isFavourited: false, instructorId: 'u2', instructorNickname: 'Seo-Yeon Lee', rating: 4.8, studentsCount: 94, createdAt: '', updatedAt: '' }),
     lessonMock({ _id: '3', title: 'Node.js REST API — Build & Deploy', description: 'Build scalable RESTful APIs with Node.js, Express, and MongoDB.', category: 'IT·Dev', isFavourited: false, instructorId: 'u3', instructorNickname: 'Jihoon Park', rating: 4.9, studentsCount: 112, createdAt: '', updatedAt: '' }),
@@ -49,10 +49,10 @@ export class SearchComponent implements OnInit {
   }
 
   applyFilters() {
-    let filtered = [...this.mockClasses];
-    if (this.activeCategory) filtered = filtered.filter(c => c.category === this.activeCategory);
-    if (this.searchQuery) filtered = filtered.filter(c => c.title.toLowerCase().includes(this.searchQuery.toLowerCase()));
-    this.classes.set(filtered);
+    let filtered = [...this.mockLessons];
+    if (this.activeCategory) filtered = filtered.filter(l => l.category === this.activeCategory);
+    if (this.searchQuery) filtered = filtered.filter(l => l.title.toLowerCase().includes(this.searchQuery.toLowerCase()));
+    this.lessons.set(filtered);
     this.totalCount.set(filtered.length);
   }
 
@@ -63,9 +63,9 @@ export class SearchComponent implements OnInit {
     this.applyFilters();
   }
 
-  onFavouriteToggled(classId: string) {
-    this.classes.update(list =>
-      list.map(c => c._id === classId ? { ...c, isFavourited: !c.isFavourited } : c)
+  onFavouriteToggled(lessonId: string) {
+    this.lessons.update(list =>
+      list.map(l => l._id === lessonId ? { ...l, isFavourited: !l.isFavourited } : l)
     );
   }
 }

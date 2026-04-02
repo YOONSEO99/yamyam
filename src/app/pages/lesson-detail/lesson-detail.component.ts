@@ -2,7 +2,7 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ClassService } from '../../services/class.service';
+import { LessonService } from '../../services/lesson.service';
 import { MessageService } from '../../services/message.service';
 import { AuthService } from '../../services/auth.service';
 import { Lesson } from '../../models/lesson';
@@ -10,23 +10,23 @@ import { Message } from '../../models/message';
 import { User } from '../../models/user';
 
 @Component({
-  selector: 'app-class-detail',
+  selector: 'app-lesson-detail',
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
-  templateUrl: './class-detail.component.html',
-  styleUrl: './class-detail.component.scss'
+  templateUrl: './lesson-detail.component.html',
+  styleUrl: './lesson-detail.component.scss'
 })
-export class ClassDetailComponent implements OnInit {
+export class LessonDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private classService = inject(ClassService);
+  private lessonService = inject(LessonService);
   private messageService = inject(MessageService);
   auth = inject(AuthService);
 
-  cls = signal<Lesson | null>(null);
+  lesson = signal<Lesson | null>(null);
   messages = signal<Message[]>([]);
   newMessage = '';
 
-  mockClass: Lesson = {
+  mockLesson: Lesson = {
     _id: '1', title: 'React 19 + TypeScript Complete Bootcamp',
     description: `This comprehensive course takes you from React fundamentals all the way to building production-ready applications with TypeScript. You'll learn the latest React 19 features including Server Components, the new use() hook, signals patterns, and the complete TypeScript integration workflow.\n\nBy the end of this course you'll be able to build, test, and deploy full React applications confidently.`,
     category: 'IT·Dev', status: 'published',
@@ -51,12 +51,12 @@ export class ClassDetailComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.cls.set(this.mockClass);
+    this.lesson.set(this.mockLesson);
     this.messages.set(this.mockMessages);
   }
 
   get isOwner() {
-    const inst = this.cls()?.instructorId;
+    const inst = this.lesson()?.instructorId;
     const instId = typeof inst === 'string' ? inst : inst?._id;
     return this.auth.currentUser()?._id === instId;
   }
@@ -71,7 +71,7 @@ export class ClassDetailComponent implements OnInit {
   }
 
   toggleFavourite() {
-    this.cls.update(c => c ? { ...c, isFavourited: !c.isFavourited } : c);
+    this.lesson.update(l => l ? { ...l, isFavourited: !l.isFavourited } : l);
   }
 
   sendMessage() {

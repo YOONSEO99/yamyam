@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-new-class',
+  selector: 'app-new-lesson',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './new-class.component.html',
-  styleUrl: './new-class.component.scss'
+  templateUrl: './new-lesson.component.html',
+  styleUrl: './new-lesson.component.scss'
 })
-export class NewClassComponent {
+export class NewLessonComponent {
   private router = inject(Router);
   saving = signal(false);
 
@@ -25,7 +25,7 @@ export class NewClassComponent {
     this.saving.set(true);
     setTimeout(() => {
       this.saving.set(false);
-      this.router.navigate(['/my-classes']);
+      this.router.navigate(['/my-lessons']);
     }, 800);
   }
 }
