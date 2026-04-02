@@ -4,22 +4,23 @@
     <h1>Create your account</h1>
     <p class="auth-sub">Start learning — or start teaching</p>
 
-    <div class="role-toggle">
-      <button [class.active]="form.role === 'student'" (click)="form.role = 'student'">
-        🎓 I'm a Student
-      </button>
-      <button [class.active]="form.role === 'instructor'" (click)="form.role = 'instructor'">
-        👨‍🏫 I'm an Instructor
-      </button>
-    </div>
 
     @if (error()) {
       <div class="error-banner">{{ error() }}</div>
     }
 
+
     <div class="form-group">
-      <label>Display Name *</label>
-      <input type="text" [(ngModel)]="form.nickname" placeholder="Your name" />
+      <label>First Name *</label>
+      <input type="text" [(ngModel)]="form.firstName" placeholder="Your first name" />
+    </div>
+    <div class="form-group">
+      <label>Last Name *</label>
+      <input type="text" [(ngModel)]="form.lastName" placeholder="Your last name" />
+    </div>
+    <div class="form-group">
+      <label>Birth Date *</label>
+      <input type="date" [(ngModel)]="form.birthDate" />
     </div>
     <div class="form-group">
       <label>Email *</label>
@@ -29,6 +30,10 @@
       <label>Password *</label>
       <input type="password" [(ngModel)]="form.password" placeholder="Min. 8 characters" />
       <span class="hint">Include letters, numbers, and a special character</span>
+    </div>
+    <div class="form-group">
+      <label>Nickname(Optional)</label>
+      <input type="text" [(ngModel)]="form.nickname" placeholder="Your nickname" />
     </div>
 
     <button class="btn-primary full-btn" (click)="submit()" [disabled]="loading()">
