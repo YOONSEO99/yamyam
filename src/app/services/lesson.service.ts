@@ -19,8 +19,8 @@ export class LessonService {
     return this.http.get<Lesson>(`${this.API}/lessons/${id}`);
   }
 
-  createLesson(data: FormData) {
-    return this.http.post<Lesson>(`${this.API}/lessons`, data);
+  createLesson(body: { title: string; description?: string; category: string; status?: string }) {
+    return this.http.post<Lesson>(`${this.API}/lessons`, body);
   }
 
   updateLesson(id: string, data: Partial<Pick<Lesson, 'title' | 'description' | 'category' | 'status'>>) {

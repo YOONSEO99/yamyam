@@ -36,6 +36,68 @@
         ></textarea>
       </div>
 
+      <div class="form-group form-grid-half">
+        <div class="input-wrap">
+          <label for="price">Price ($) *</label>
+          <input
+            id="price"
+            type="number"
+            [(ngModel)]="form.price"
+            placeholder="e.g. 50"
+          />
+        </div>
+        <div class="input-wrap">
+          <label for="maxCapacity">Max Capacity *</label>
+          <input
+            id="maxCapacity"
+            type="number"
+            [(ngModel)]="form.maxCapacity"
+            placeholder="e.g. 10"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Schedule *</label>
+        <div class="schedule-inputs">
+          <input type="date" [(ngModel)]="form.startDate" />
+          <span class="separator">at</span>
+          <input type="time" [(ngModel)]="form.startTime" />
+          <span class="separator">~</span>
+          <input type="time" [(ngModel)]="form.endTime" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Location *</label>
+        <div class="location-inputs">
+          <div class="loc-row-top">
+            <input
+              type="text"
+              [(ngModel)]="form.streetNumber"
+              placeholder="Street No. (e.g. 123)"
+            />
+            <input
+              type="text"
+              [(ngModel)]="form.streetName"
+              placeholder="Street Name (e.g. Water St)"
+            />
+          </div>
+          <div class="loc-row-bottom">
+            <input
+              type="text"
+              [(ngModel)]="form.city"
+              placeholder="City (e.g. Vancouver)"
+            />
+            <input
+              type="text"
+              [(ngModel)]="form.postalCode"
+              placeholder="Postal Code"
+            />
+          </div>
+        </div>
+      </div>
+
       <div class="form-group">
         <label>Thumbnail</label>
         <div class="upload-zone">
@@ -45,23 +107,20 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label>Status</label>
-        <div class="radio-group">
-          <label class="radio-opt">
-            <input type="radio" [(ngModel)]="form.status" value="draft" /> Draft
-          </label>
-          <label class="radio-opt">
-            <input type="radio" [(ngModel)]="form.status" value="published" />
-            Published
-          </label>
-        </div>
-      </div>
-
       <div class="form-actions">
-        <button class="btn-ghost" (click)="submit()">Save as Draft</button>
-        <button class="btn-primary" (click)="submit()" [disabled]="saving()">
-          {{ saving() ? "Creating..." : "Create Lesson" }}
+        <button
+          class="btn-ghost"
+          (click)="submit('draft')"
+          [disabled]="saving()"
+        >
+          Save as Draft
+        </button>
+        <button
+          class="btn-primary"
+          (click)="submit('published')"
+          [disabled]="saving()"
+        >
+          {{ saving() ? "Creating..." : "Publish Lesson" }}
         </button>
       </div>
     </div>

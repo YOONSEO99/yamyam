@@ -2,6 +2,8 @@ import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
+import { LessonService } from '../../services/lesson.service';
 
 @Component({
   selector: 'app-new-lesson',
@@ -12,20 +14,33 @@ import { Router } from '@angular/router';
 })
 export class NewLessonComponent {
   private router = inject(Router);
+  private lessonService = inject(LessonService);
   saving = signal(false);
 
   form = {
-    title: '', description: '', category: '', status: 'draft'
+    title: '', description: '', category: '', status: 'draft',
+    price: null, maxCapacity: null,
+    startDate: '', startTime: '', endTime: '',
+    streetNumber: '', streetName: '', city: '', postalCode: ''
   };
 
   categories = ['IT·Dev', 'Design', 'Marketing', 'Photo·Video', 'Language', 'Music', 'Cooking', 'Data'];
 
-  submit() {
-    if (!this.form.title || !this.form.category) return;
+  submit(targetStatus: 'draft' | 'published') {
+    if (!this.form.title || !this.form.category) {
+      alert('Both title and category are required.');
+      return;
+    }
+
+    this.form.status = targetStatus;
     this.saving.set(true);
-    setTimeout(() => {
-      this.saving.set(false);
-      this.router.navigate(['/my-lessons']);
-    }, 800);
+
+    this.lessonService
+      .createLesson({ ...this.form })
+      .pipe(finalize(() => this.saving.set(false)))
+      .subscribe({
+        next: () => this.router.navigate(['/my-lessons']),
+        error: () => alert('Fail to create the lesson. Please try again.')
+      });
   }
 }

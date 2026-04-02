@@ -32,7 +32,7 @@ exports.createLesson = async (req, res) => {
   try {
     const lessonData = {
       ...req.body,
-      instructorId: "thisisfakeid1234567890",
+      instructorId: req.user._id,
     };
     const lesson = await Lesson.create(lessonData);
     res.status(201).json(lesson);

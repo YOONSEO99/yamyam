@@ -9,9 +9,6 @@ async function seedDB() {
   try {
     await mongoose.connect(MONGO_URI);
 
-    await User.deleteMany({});
-    await Lesson.deleteMany({});
-
     const mockInstructor = new User({
       email: "rachel@example.com",
       password: "password123",
