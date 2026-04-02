@@ -15,21 +15,30 @@ export class RegisterComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  form = { email: '', password: '', nickname: '', role: 'student' };
+  form = { 
+    email: '', 
+    password: '',
+    firstName: '',
+    lastName: '',
+    birthDate: '',
+    nickname: '', 
+    role: 'user' 
+  };
   loading = signal(false);
   error = signal('');
 
   submit() {
     this.error.set('');
-    if (!this.form.email || !this.form.password || !this.form.nickname) {
+    if (!this.form.email || !this.form.password || !this.form.firstName || !this.form.lastName || !this.form.birthDate) {
       this.error.set('Please fill in all required fields.');
       return;
     }
     this.loading.set(true);
     this.auth.register(this.form).subscribe({
       next: () => this.router.navigate(['/']),
-      error: () => {
-        this.error.set('Registration failed. Email may already be in use.');
+      error: (err) => {
+        const errorMessage = err.error?.message || 'Registration failed. Please try again.';
+        this.error.set(errorMessage);
         this.loading.set(false);
       }
     });
