@@ -19,7 +19,20 @@ export class LessonService {
     return this.http.get<Lesson>(`${this.API}/lessons/${id}`);
   }
 
-  createLesson(data: FormData) {
+  createLesson(body: any) {
+    const userStr = localStorage.getItem('user');
+    let currentUserId = '';
+    if (userStr) {
+      const userObj = JSON.parse(userStr);
+      currentUserId = userObj._id;
+    }
+
+    console.log('CURRENT USER ID:', currentUserId);
+
+    const data = {
+      ...body,
+      instructorId: currentUserId
+    }
     return this.http.post<Lesson>(`${this.API}/lessons`, data);
   }
 
