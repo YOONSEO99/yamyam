@@ -8,6 +8,7 @@ import { CategoryBarComponent } from '../../shared/category-bar/category-bar.com
 import { LessonCardComponent } from '../../shared/lesson-card/lesson-card.component';
 import { Lesson } from '../../models/lesson';
 import { lessonMock } from '../../data/lesson-mock';
+import { AuthService } from '@app/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +20,7 @@ import { lessonMock } from '../../data/lesson-mock';
 export class HomeComponent implements OnInit {
   private lessonService = inject(LessonService);
   private router = inject(Router);
+  public auth = inject(AuthService)
 
   lessons = signal<Lesson[]>([]);
   loading = signal(false);
@@ -57,5 +59,13 @@ export class HomeComponent implements OnInit {
     this.lessons.update(list =>
       list.map(l => l._id === lessonId ? { ...l, isFavourited: !l.isFavourited } : l)
     );
+  }
+
+  onBecomeInstructor() {
+    if(this.auth.isLoggedIn()){
+      this.router.navigate(['/profile'], {queryParams:{edit:'true'}});
+    }else{
+      this.router.navigate(['/login']);
+    }
   }
 }

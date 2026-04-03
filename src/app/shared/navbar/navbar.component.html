@@ -3,7 +3,7 @@
     <a routerLink="/" class="logo"> <span class="logo-yam">yam</span>yam </a>
     <div class="nav-links">
       <a routerLink="/search" routerLinkActive="active">Find Classes</a>
-      <a routerLink="/users" routerLinkActive="active">Instructors</a>
+
       @if (auth.isLoggedIn()) {
         <a routerLink="/my-lessons" routerLinkActive="active">My Lessons</a>
         <a routerLink="/favourites" routerLinkActive="active">Favourites</a>
