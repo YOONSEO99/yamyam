@@ -30,11 +30,11 @@ exports.getLessonById = async (req, res) => {
 
 exports.createLesson = async (req, res) => {
   try {
-    const lessonData = {
-      ...req.body,
-      instructorId: req.user._id,
-    };
-    const lesson = await Lesson.create(lessonData);
+    // const lessonData = {
+    //   ...req.body,
+    //   instructorId: req.user._id,
+    // };
+    const lesson = await Lesson.create(req.body);
     res.status(201).json(lesson);
   } catch (error) {
     res.status(500).json({ message: error.message });

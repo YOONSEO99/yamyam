@@ -19,8 +19,21 @@ export class LessonService {
     return this.http.get<Lesson>(`${this.API}/lessons/${id}`);
   }
 
-  createLesson(body: { title: string; description?: string; category: string; status?: string }) {
-    return this.http.post<Lesson>(`${this.API}/lessons`, body);
+  createLesson(body: any) {
+    const userStr = localStorage.getItem('user');
+    let currentUserId = '';
+    if (userStr) {
+      const userObj = JSON.parse(userStr);
+      currentUserId = userObj._id;
+    }
+
+    console.log('CURRENT USER ID:', currentUserId);
+
+    const data = {
+      ...body,
+      instructorId: currentUserId
+    }
+    return this.http.post<Lesson>(`${this.API}/lessons`, data);
   }
 
   updateLesson(id: string, data: Partial<Pick<Lesson, 'title' | 'description' | 'category' | 'status'>>) {

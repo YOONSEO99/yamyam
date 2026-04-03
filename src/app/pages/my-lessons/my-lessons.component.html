@@ -44,21 +44,25 @@
     @if (activeTab() === "lessons") {
       <div class="lesson-list">
         @for (l of myLessons; track l._id) {
-          <div class="lesson-row card">
-            <div class="lesson-thumb" [style.background]="'var(--yam-light)'">
+          <div class="lesson-row">
+            <div class="lesson-thumb">
               <span
                 style="
-                  font-size: 11px;
+                  font-size: 10px;
                   color: var(--yam);
-                  font-family: monospace;
+                  font-weight: 700;
+                  text-align: center;
+                  padding: 0 4px;
                 "
-                >{{ l.category }}</span
               >
+                {{ l.category }}
+              </span>
             </div>
+
             <div class="lesson-row-info">
               <div class="lesson-row-title">{{ l.title }}</div>
               <div class="class-row-meta">
-                {{ l.studentsCount }} students
+                <span>👤 {{ l.studentsCount }} students</span>
                 <span
                   class="badge"
                   [class.badge-success]="l.status === 'published'"
@@ -68,12 +72,15 @@
                 </span>
               </div>
             </div>
+
             <div class="lesson-row-actions">
               @if (l.rating) {
                 <span class="star-rating">★ {{ l.rating }}</span>
               }
               <a [routerLink]="['/lessons', l._id]" class="btn-ghost">View</a>
-              <a [routerLink]="['/lessons', l._id, 'edit']" class="btn-outline">Edit</a>
+              <a [routerLink]="['/lessons', l._id, 'edit']" class="btn-outline"
+                >Edit</a
+              >
             </div>
           </div>
         }
