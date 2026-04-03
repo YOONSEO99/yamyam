@@ -51,13 +51,16 @@ main {
     font-size: 72px;
     color: var(--text-primary);
   }
+
   .line-2 {
     font-size: 72px;
     color: var(--text-primary);
   }
+
   .line-3 {
     font-size: 72px;
   }
+
   .accent {
     color: var(--yam);
   }
@@ -78,6 +81,7 @@ main {
   background: #fff;
   margin-bottom: 18px;
   transition: border-color 0.15s;
+
   &:focus-within {
     border-color: var(--yam-mid);
   }
@@ -89,9 +93,11 @@ main {
     font-size: 15px;
     background: transparent;
     color: var(--text-primary);
+
     &::placeholder {
       color: var(--text-muted);
     }
+
     &:focus {
       outline: none;
     }
@@ -111,6 +117,7 @@ main {
   cursor: pointer;
   transition: background 0.15s;
   white-space: nowrap;
+
   &:hover {
     background: var(--yam-dark);
   }
@@ -138,6 +145,7 @@ main {
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s;
+
   &:hover {
     border-color: var(--yam-soft);
     background: var(--yam-light);
@@ -173,6 +181,7 @@ main {
   font-size: 13px;
   color: var(--yam);
   font-weight: 500;
+
   &:hover {
     text-decoration: underline;
   }
@@ -198,7 +207,7 @@ main {
   gap: 20px;
   align-items: stretch;
 
-  > * {
+  >* {
     min-width: 0;
   }
 }
@@ -244,6 +253,7 @@ main {
     letter-spacing: -0.5px;
     margin-bottom: 6px;
   }
+
   p {
     font-size: 14px;
     color: rgba(255, 255, 255, 0.75);
@@ -255,9 +265,16 @@ main {
   color: var(--yam);
   font-size: 14px;
   padding: 12px 26px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
   flex-shrink: 0;
+
   &:hover {
     background: var(--yam-light);
+    transform: translateY(-2px);
   }
 }
 
@@ -274,6 +291,7 @@ main {
   }
 
   .hero-headline {
+
     .line-1,
     .line-2,
     .line-3 {
