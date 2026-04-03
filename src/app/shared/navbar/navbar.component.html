@@ -4,24 +4,24 @@
     <div class="nav-links">
       <a routerLink="/search" routerLinkActive="active">Find Classes</a>
       <a routerLink="/users" routerLinkActive="active">Instructors</a>
-      <!-- @if (auth.isLoggedIn()) { -->
+      <@if (auth.isLoggedIn()) {
       <a routerLink="/my-lessons" routerLinkActive="active">My Lessons</a>
       <a routerLink="/favourites" routerLinkActive="active">Favourites</a>
-      <!-- } -->
+      < } 
     </div>
     <div class="nav-actions">
-      <!-- @if (auth.isLoggedIn()) {
-        @if (auth.isInstructor()) { -->
+      @if (auth.isLoggedIn()) {
+        @if (auth.isInstructor()) { 
       <a routerLink="/lessons/new" class="btn-primary">+ New Lesson</a>
-      <!-- } -->
+       } 
       <a routerLink="/profile" class="avatar avatar-sm">
         {{ auth.currentUser()?.nickname?.charAt(0)?.toUpperCase() }}
       </a>
       <button class="btn-ghost" (click)="auth.logout()">Log out</button>
-      <!-- } @else {
+      } @else {
         <a routerLink="/login" class="btn-ghost">Log in</a>
         <a routerLink="/register" class="btn-primary">Sign up</a>
-      } -->
+      } 
     </div>
   </div>
 </nav>

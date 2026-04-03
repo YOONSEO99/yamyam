@@ -2,11 +2,18 @@
   <div class="container profile-layout">
     <div class="profile-card card">
       <div class="profile-hero">
-        <div class="avatar avatar-xl">{{ form.nickname.charAt(0) }}</div>
+        <div class="avatar avatar-xl">{{ getDisplayName().charAt(0).toUpperCase() }}</div>
         <div class="profile-info">
-          <h1>{{ form.nickname }}</h1>
+          <h1>{{ getDisplayName() }}</h1>
           <p class="profile-email">{{ form.email }}</p>
-          <span class="badge badge-yam">{{ auth.currentUser()?.role ?? 'student' }}</span>
+          <span class="badge badge-yam">{{ auth.currentUser()?.role }}</span>
+          @if(auth.currentUser()?.isInstructor) {
+            <span class="badge" style="background-color: #4CAF50; color: white;">Instructor</span>
+          }
+          @if(auth.currentUser()?.isAdmin) {
+            <span class="badge" style="background-color: #f44336; color: white;">Admin</span>
+          }
+          
         </div>
         <button class="btn-outline" (click)="editing.set(!editing())">
           {{ editing() ? 'Cancel' : '✎ Edit Profile' }}
@@ -21,12 +28,32 @@
       } @else {
         <div class="edit-form">
           <div class="form-group">
-            <label>Display Name</label>
+            <label>Email</label>
+            <input type="email" [(ngModel)]="form.email" disabled style="background-color: var(--gray-1); cursor: not-allowed;" />
+          </div>
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" [(ngModel)]="form.firstName" />
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" [(ngModel)]="form.lastName" />
+          </div>
+          <div class="form-group">
+            <label>Birth Date</label>
+            <input type="date" [(ngModel)]="form.birthDate" />
+          </div>
+          <div class="form-group">
+            <label>Nickname</label>
             <input type="text" [(ngModel)]="form.nickname" />
           </div>
           <div class="form-group">
             <label>Bio</label>
             <textarea [(ngModel)]="form.bio" rows="3"></textarea>
+          </div>
+          <div class="form-group checkbox-group" style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+            <input type="checkbox" id="instructorCheck" [(ngModel)]="form.isInstructor" style="width: auto; cursor: pointer;" />
+            <label for="instructorCheck" style="margin: 0; cursor: pointer;">Register as an Instructor</label>
           </div>
           <button class="btn-primary" (click)="save()" [disabled]="saving()">
             {{ saving() ? 'Saving...' : 'Save Changes' }}
