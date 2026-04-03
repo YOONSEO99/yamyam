@@ -41,7 +41,7 @@ export class EditLessonComponent implements OnInit {
       return;
     }
     this.lessonId = id;
-    this.lessonService.getLesson(id).subscribe({
+    this.lessonService.getLessonById(id).subscribe({
       next: (lesson) => {
         this.patchForm(lesson);
         this.loading.set(false);

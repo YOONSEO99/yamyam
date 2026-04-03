@@ -1,8 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { LessonService } from './../../services/lesson.service';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Lesson } from '../../models/lesson';
 import { lessonMock } from '../../data/lesson-mock';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-my-lessons',
@@ -12,13 +14,46 @@ import { lessonMock } from '../../data/lesson-mock';
   styleUrl: './my-lessons.component.scss'
 })
 export class MyLessonsComponent {
+  private lessonService = inject(LessonService);
+
   activeTab = signal<'lessons' | 'favourites' | 'messages'>('lessons');
+  isLoading = signal<boolean>(false);
+  myLessons = signal<Lesson[]>([]);
 
-  stats = { lessons: 3, students: 254, favourites: 42 };
+  stats = { lessons: 0, students: 254, favourites: 42 };
 
-  myLessons: Lesson[] = [
-    lessonMock({ _id: '1', title: 'React 19 + TypeScript Complete Bootcamp', description: '', category: 'IT·Dev', isFavourited: false, instructorId: 'u1', instructorNickname: 'MinJun Kim', studentsCount: 128, rating: 4.9, status: 'published', createdAt: '2024-11-01', updatedAt: '2025-01-15' }),
-    lessonMock({ _id: '3', title: 'Node.js REST API — Build & Deploy', description: '', category: 'IT·Dev', isFavourited: false, instructorId: 'u1', instructorNickname: 'MinJun Kim', studentsCount: 98, rating: 4.9, status: 'published', createdAt: '2024-09-10', updatedAt: '2025-02-01' }),
-    lessonMock({ _id: '9', title: 'MongoDB Schema Design & Aggregation', description: '', category: 'IT·Dev', isFavourited: false, instructorId: 'u1', instructorNickname: 'MinJun Kim', studentsCount: 0, status: 'draft', createdAt: '2025-03-01', updatedAt: '2025-03-01' }),
-  ];
+  ngOnInit(): void {
+    this.loadMyLessons();
+  }
+
+  loadMyLessons() {
+    const userJson = localStorage.getItem('user');
+
+    if (userJson) {
+      try {
+        const userData = JSON.parse(userJson);
+
+        const myId = userData._id;
+
+        if (myId) {
+          this.isLoading.set(true);
+          this.lessonService.getMyLessons(myId).subscribe({
+            next: (data) => {
+              this.myLessons.set(data);
+              this.stats.lessons = data.length;
+              this.isLoading.set(false);
+            },
+            error: (err) => {
+              console.error('Failed to fetch:', err);
+              this.isLoading.set(false);
+            }
+          });
+        }
+      } catch (e) {
+        console.error('JSON Parsing Error:', e);
+      }
+    } else {
+      console.error('User data not found in storage. Please login again.');
+    }
+  }
 }

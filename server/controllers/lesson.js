@@ -21,8 +21,35 @@ exports.getAllLessons = async (req, res) => {
 
 exports.getLessonById = async (req, res) => {
   try {
-    const lesson = await Lesson.findById(req.params.id);
+    const { id } = req.params;
+    const lesson = await Lesson.findById(id).populate(
+      "instructorId",
+      "nickname bio",
+    );
+    if (!lesson) {
+      return res.status(404).json({ message: "Lesson Not Found" });
+    }
+    console.log(
+      `[GET] Lesson fetched with Instructor: ${lesson.instructorId?.nickname}`,
+    );
     res.status(200).json(lesson);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getMyLessons = async (req, res) => {
+  try {
+    const { instructorId } = req.query;
+    let query = {};
+    if (instructorId) {
+      query = { instructorId: instructorId };
+    }
+    const lessons = await Lesson.find(query).sort({ createdAt: -1 });
+    console.log(
+      `[GET] Lessons fetched. Filter by instructor: ${instructorId || "None"}`,
+    );
+    res.status(200).json(lessons);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -30,10 +57,6 @@ exports.getLessonById = async (req, res) => {
 
 exports.createLesson = async (req, res) => {
   try {
-    // const lessonData = {
-    //   ...req.body,
-    //   instructorId: req.user._id,
-    // };
     const lesson = await Lesson.create(req.body);
     res.status(201).json(lesson);
   } catch (error) {
