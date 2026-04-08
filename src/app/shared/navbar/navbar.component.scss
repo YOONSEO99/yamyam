@@ -39,6 +39,26 @@
     transition: color 0.15s;
     &:hover, &.active { color: var(--text-primary); }
   }
+  .admin-link {
+    font-weight: 700;
+    position: relative;
+    padding-left: 15px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 12px;
+      background-color: var(--gray-2);
+    }
+
+    &:hover, &.active {
+      color: #b91c1c !important; 
+    }
+  }  
 }
 
 .nav-actions {
