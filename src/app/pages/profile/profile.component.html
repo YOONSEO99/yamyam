@@ -6,13 +6,16 @@
         <div class="profile-info">
           <h1>{{ getDisplayName() }}</h1>
           <p class="profile-email">{{ form.email }}</p>
-          <span class="badge badge-yam">{{ auth.currentUser()?.role }}</span>
-          @if(auth.currentUser()?.isInstructor) {
-            <span class="badge" style="background-color: #4CAF50; color: white;">Instructor</span>
-          }
           @if(auth.currentUser()?.isAdmin) {
-            <span class="badge" style="background-color: #f44336; color: white;">Admin</span>
+            <span class="badge" style="background-color: #f44336; color: white;">admin</span>
+          }@else{
+            <span class="badge badge-yam">{{ auth.currentUser()?.role }}</span>
+
+            @if(auth.currentUser()?.isInstructor) {
+              <span class="badge" style="background-color: #4CAF50; color: white;">instructor</span>
+            }
           }
+          
           
         </div>
         <button class="btn-outline" (click)="editing.set(!editing())">

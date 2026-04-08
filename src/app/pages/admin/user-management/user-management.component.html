@@ -1,1 +1,78 @@
-<p>user-management works!</p>
+<div class="page-wrapper">
+  <div class="container">
+    <div class="admin-header">
+      <div class="header-content">
+        <h1 class="page-title">User Management</h1>
+        <p class="page-sub">
+          Total <span class="count-highlight">{{ totalUsers() }}</span> users registered in the system
+        </p>
+      </div>
+    </div>
+
+    <div class="table-card card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Member Info</th>
+            <th>Role & Authority</th>
+            <th>Status</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users(); track user._id) {
+            <tr [class.is-archived]="user.deletedAt">
+              <td>
+                <div class="user-info">
+                  <span class="name">{{ user.nickname || user.firstName }}</span>
+                  <span class="email">{{ user.email }}</span>
+                </div>
+              </td>
+
+              <td>
+                <div class="badge-group">
+                  <span class="badge badge-role">{{ user.role }}</span>
+                  @if (user.isInstructor) {
+                    <span class="badge badge-instructor">Instructor</span>
+                  }
+                  @if (user.isAdmin) {
+                    <span class="badge badge-admin">Admin</span>
+                  }
+                </div>
+              </td>
+
+              <td>
+                <div class="status-wrapper">
+                  <span class="status-indicator" [class.active]="!user.deletedAt"></span>
+                  <span class="status-text" [class.text-active]="!user.deletedAt" [class.text-archived]="user.deletedAt">
+                    {{ user.deletedAt ? 'Archived' : 'Active' }}
+                  </span>
+                </div>
+              </td>
+
+              <td class="text-right">
+                <div class="action-wrapper">
+                  @if (!user.deletedAt) {
+                    <button class="btn-action btn-deactivate" (click)="onDeactivate(user)">
+                      Deactivate
+                    </button>
+                  } @else {
+                    <button class="btn-action btn-restore" (click)="onRestore(user)">
+                      Restore Account
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="empty-state">
+                No users found.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,155 @@
+/* Page Header */
+.admin-header {
+  margin-bottom: 32px;
+  .page-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .page-sub {
+    font-size: 14px;
+    color: var(--text-secondary);
+    .count-highlight {
+      color: var(--yam);
+      font-weight: 700;
+    }
+  }
+}
+
+/* Table Design */
+.table-card {
+  padding: 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+
+  th {
+    padding: 16px 24px;
+    background: #fcfcfc;
+    border-bottom: 1px solid var(--gray-2);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f1f1;
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover { background-color: #fafafa; }
+}
+
+/* User Info Cell */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  .name {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-primary);
+  }
+  .email {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+}
+
+/* Badge System */
+.badge-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  .badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .badge-role { background: #f0f0f0; color: #555; }
+  .badge-instructor { background: #e8f5e9; color: #2e7d32; }
+  .badge-admin { background: #ffebee; color: #c62828; }
+}
+
+/* Status Indicators */
+.status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ef4444; /* Default Red */
+  &.active { background-color: #22c55e; } /* Active Green */
+}
+.status-text {
+  font-size: 13px;
+  font-weight: 600;
+  &.text-active { color: #15803d; }
+  &.text-archived { color: #b91c1c; }
+}
+
+/* Action Buttons */
+.text-right { text-align: right; }
+
+.btn-action {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+
+  &.btn-deactivate {
+    background: #fff;
+    color: #ef4444;
+    border-color: #fecaca;
+    &:hover {
+      background: #fef2f2;
+      border-color: #ef4444;
+      transform: translateY(-1px);
+    }
+  }
+
+  &.btn-restore {
+    background: #4b5563;
+    color: #fff;
+    &:hover {
+      background: #1f2937;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* Archived Row Styling (The "Disabled" Look) */
+.is-archived {
+  background-color: #f9fafb;
+  td { opacity: 0.6; }
+  .name, .email, .status-text { color: #9ca3af !important; }
+  .badge { background: #e5e7eb !important; color: #9ca3af !important; }
+  .status-indicator { background-color: #d1d5db; }
+}
+
+.empty-state {
+  padding: 60px;
+  text-align: center;
+  color: #9ca3af;
+  font-style: italic;
+}
