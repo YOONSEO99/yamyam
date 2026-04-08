@@ -12,5 +12,6 @@ export const routes: Routes = [
   { path: 'register', loadComponent: () => import('@app/pages/register/register.component').then(m => m.RegisterComponent) },
   { path: 'profile', loadComponent: () => import('@app/pages/profile/profile.component').then(m => m.ProfileComponent) },
   { path: 'users', loadComponent: () => import('@app/pages/all-users/all-users.component').then(m => m.AllUsersComponent) },
+  { path:'admin/users', loadComponent: ()=> import('@app/pages/admin/user-management/user-management.component').then(m => m.UserManagementComponent)},
   { path: '**', redirectTo: '' }
 ];

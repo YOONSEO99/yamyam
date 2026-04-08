@@ -1,1 +1,74 @@
-<p>user-management works!</p>
+<div class="page-wrapper">
+    <div class="container">
+      <h1 class="page-title">User Management</h1>
+      <p class="page-sub">Manage all registered users, roles, and permissions.</p>
+  
+      <div class="stats-grid">
+        <div class="stat-card card">
+          <h3>Total Users</h3>
+          <p class="stat-number">{{ users().length }}</p>
+        </div>
+        <div class="stat-card card">
+          <h3>Instructors</h3>
+          <p class="stat-number instructor-text">4</p> </div>
+        <div class="stat-card card">
+          <h3>Admins</h3>
+          <p class="stat-number admin-text">1</p> </div>
+      </div>
+  
+      <div class="table-card card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>User Info</th>
+              <th>Joined Date</th>
+              <th>Role</th>
+              <th>Instructor</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user._id) {
+              <tr>
+                <td>
+                  <div class="user-info-cell">
+                    <div class="avatar avatar-sm">{{ (user.nickname || 'U').charAt(0).toUpperCase() }}</div>
+                    <div class="user-details">
+                      <span class="user-name">{{ user.nickname || 'Guest User' }}</span>
+                      <span class="user-email">{{ user.email }}</span>
+                    </div>
+                  </div>
+                </td>
+                
+                <td class="date-cell">{{ user.createdAt | date:'mediumDate' }}</td>
+                
+                <td>
+                  @if (user.isAdmin) {
+                    <span class="badge" style="background-color: #f44336; color: white;">Admin</span>
+                  } @else {
+                    <span class="badge badge-yam">{{ user.role || 'User' }}</span>
+                  }
+                </td>
+                
+                <td>
+                  @if (user.isInstructor) {
+                    <span class="badge" style="background-color: #4CAF50; color: white;">Yes</span>
+                  } @else {
+                    <span class="text-muted">-</span>
+                  }
+                </td>
+                
+                <td class="text-right">
+                  <button class="btn-outline btn-sm">Edit</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="empty-state">No users found.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
