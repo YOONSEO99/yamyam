@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Lesson } from '../models/lesson';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class LessonService {
@@ -15,7 +16,7 @@ export class LessonService {
     return this.http.get<Lesson[]>(`${this.API}/lessons`, { params });
   }
 
-  getLesson(id: string) {
+  getLessonById(id: string) {
     return this.http.get<Lesson>(`${this.API}/lessons/${id}`);
   }
 
@@ -26,8 +27,6 @@ export class LessonService {
       const userObj = JSON.parse(userStr);
       currentUserId = userObj._id;
     }
-
-    console.log('CURRENT USER ID:', currentUserId);
 
     const data = {
       ...body,
@@ -40,8 +39,10 @@ export class LessonService {
     return this.http.put<Lesson>(`${this.API}/lessons/${id}`, data);
   }
 
-  getMyLessons() {
-    return this.http.get<Lesson[]>(`${this.API}/lessons/mine`);
+  getMyLessons(userId: string): Observable<Lesson[]> {
+    return this.http.get<Lesson[]>(`${this.API}/lessons`, {
+      params: { instructorId: userId }
+    });
   }
 
   getFavouriteLessons() {

@@ -43,46 +43,59 @@
 
     @if (activeTab() === "lessons") {
       <div class="lesson-list">
-        @for (l of myLessons; track l._id) {
-          <div class="lesson-row">
-            <div class="lesson-thumb">
-              <span
-                style="
-                  font-size: 10px;
-                  color: var(--yam);
-                  font-weight: 700;
-                  text-align: center;
-                  padding: 0 4px;
-                "
-              >
-                {{ l.category }}
-              </span>
-            </div>
-
-            <div class="lesson-row-info">
-              <div class="lesson-row-title">{{ l.title }}</div>
-              <div class="class-row-meta">
-                <span>👤 {{ l.studentsCount }} students</span>
+        @if (isLoading()) {
+          <div class="loading-state">Loading your lessons...</div>
+        } @else {
+          @for (l of myLessons(); track l._id) {
+            <div class="lesson-row">
+              <div class="lesson-thumb">
                 <span
-                  class="badge"
-                  [class.badge-success]="l.status === 'published'"
-                  [class.badge-draft]="l.status === 'draft'"
+                  style="
+                    font-size: 10px;
+                    color: var(--yam);
+                    font-weight: 700;
+                    text-align: center;
+                    padding: 0 4px;
+                  "
                 >
-                  {{ l.status }}
+                  {{ l.category }}
                 </span>
               </div>
-            </div>
 
-            <div class="lesson-row-actions">
-              @if (l.rating) {
-                <span class="star-rating">★ {{ l.rating }}</span>
-              }
-              <a [routerLink]="['/lessons', l._id]" class="btn-ghost">View</a>
-              <a [routerLink]="['/lessons', l._id, 'edit']" class="btn-outline"
-                >Edit</a
+              <div class="lesson-row-info">
+                <div class="lesson-row-title">{{ l.title }}</div>
+                <div class="class-row-meta">
+                  <span>👤 {{ l.studentsCount || 0 }} students</span>
+                  <span
+                    class="badge"
+                    [class.badge-success]="l.status === 'published'"
+                    [class.badge-draft]="l.status === 'draft'"
+                  >
+                    {{ l.status }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="lesson-row-actions">
+                @if (l.rating) {
+                  <span class="star-rating">★ {{ l.rating }}</span>
+                }
+                <a [routerLink]="['/lessons', l._id]" class="btn-ghost">View</a>
+                <a
+                  [routerLink]="['/lessons', l._id, 'edit']"
+                  class="btn-outline"
+                  >Edit</a
+                >
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-state">
+              <p>You haven't created any lessons yet.</p>
+              <a routerLink="/lessons/new" class="btn-link"
+                >Create your first lesson!</a
               >
             </div>
-          </div>
+          }
         }
       </div>
     }

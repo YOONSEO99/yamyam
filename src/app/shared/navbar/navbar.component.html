@@ -11,9 +11,9 @@
     </div>
     <div class="nav-actions">
       @if (auth.isLoggedIn()) {
-        @if (auth.isInstructor()) {
+        <!-- @if (auth.isInstructor()) {
           <a routerLink="/lessons/new" class="btn-primary">+ New Lesson</a>
-        }
+        } -->
         <a routerLink="/profile" class="avatar avatar-sm">
           {{ auth.currentUser()?.nickname?.charAt(0)?.toUpperCase() }}
         </a>

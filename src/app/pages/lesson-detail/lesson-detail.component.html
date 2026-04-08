@@ -60,22 +60,50 @@
       <div class="side-col">
         <!-- Instructor card -->
         <div class="card instructor-card">
-          <h3 class="side-title">Instructor</h3>
-          <div class="inst-profile">
-            <span class="avatar avatar-lg">{{
-              instructorFromLesson(l)?.nickname?.charAt(0)
-            }}</span>
-            <div>
-              <div class="inst-full-name">
-                {{ instructorFromLesson(l)?.nickname }}
+          <div class="inst-profile-header">
+            <span class="avatar avatar-lg">
+              {{
+                isUserObject(l.instructorId)
+                  ? l.instructorId.nickname?.charAt(0)
+                  : "?"
+              }}
+            </span>
+
+            <div class="inst-info-main">
+              <div class="name-badge-group">
+                <h3 class="inst-full-name">
+                  {{
+                    isUserObject(l.instructorId)
+                      ? l.instructorId.nickname
+                      : "Instructor"
+                  }}
+                </h3>
+
+                <div class="verified-badge-box">
+                  <svg
+                    class="check-icon"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
+                    />
+                  </svg>
+                  <span class="verified-text">Verified</span>
+                </div>
               </div>
-              <div class="inst-role">Verified Instructor</div>
             </div>
           </div>
-          <p class="inst-bio">
-            Senior developer with 10+ years of experience. Helped over 3,000
-            students land their first developer jobs.
-          </p>
+
+          <div class="inst-body">
+            <p class="inst-bio">
+              {{
+                isUserObject(l.instructorId)
+                  ? l.instructorId.bio
+                  : "This instructor has not provided a biography yet."
+              }}
+            </p>
+          </div>
         </div>
 
         <!-- Messages -->
