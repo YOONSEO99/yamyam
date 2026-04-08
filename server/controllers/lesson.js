@@ -1,4 +1,5 @@
 const Lesson = require("../models/lesson");
+const User = require("../models/user");
 
 exports.getAllLessons = async (req, res) => {
   try {
@@ -29,9 +30,6 @@ exports.getLessonById = async (req, res) => {
     if (!lesson) {
       return res.status(404).json({ message: "Lesson Not Found" });
     }
-    console.log(
-      `[GET] Lesson fetched with Instructor: ${lesson.instructorId?.nickname}`,
-    );
     res.status(200).json(lesson);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -81,5 +79,73 @@ exports.deleteLesson = async (req, res) => {
     res.status(200).json({ message: "Lesson deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getFavouriteLessons = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const favoriteIds = user.favoriteLessonIds || [];
+    const favoriteLessons = await Lesson.find({
+      _id: { $in: favoriteIds },
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json(favoriteLessons);
+  } catch (error) {
+    console.error("error loading favorites: ", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+exports.toggleFavourite = async (req, res) => {
+  try {
+    const { id: lessonId } = req.params;
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not Found" });
+    }
+    console.log("user.favoriteLessonIds :: ", user.favoriteLessonIds);
+
+    if (!user.favoriteLessonIds) {
+      user.favoriteLessonIds = [];
+    }
+
+    const isAlreadyFavourited = user.favoriteLessonIds.includes(lessonId);
+
+    if (isAlreadyFavourited) {
+      user.favoriteLessonIds = user.favoriteLessonIds.filter(
+        (id) => id !== lessonId,
+      );
+    } else {
+      user.favoriteLessonIds.push(lessonId);
+    }
+
+    user.markModified("favoriteLessonIds");
+    await user.save();
+
+    res.status(200).json({
+      message: isAlreadyFavourited
+        ? "Removed from favourites"
+        : "Added to favourites",
+      isFavourited: !isAlreadyFavourited,
+    });
+  } catch (error) {
+    console.error("toggle error: ", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

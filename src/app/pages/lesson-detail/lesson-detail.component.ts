@@ -38,7 +38,6 @@ export class LessonDetailComponent implements OnInit {
         .subscribe({
           next: (data) => {
             this.lesson.set(data);
-            console.log('success!! :: ', data._id);
           },
           error: (err) => {
             console.error('Error ::', err)

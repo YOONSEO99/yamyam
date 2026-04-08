@@ -4,7 +4,7 @@
     <button
       class="heart-btn"
       (click)="onFavourite($event)"
-      [class.on]="lesson.isFavourited"
+      [class.on]="isFavourited"
     >
       {{ lesson.isFavourited ? "♥" : "♡" }}
     </button>
