@@ -10,6 +10,31 @@
     </div>
 
     <div class="table-card card">
+      <div class="filter-bar">
+        <div class="filter-group">
+          <select [(ngModel)]="filterRole" (change)="applyFilters()">
+            <option value="">All Roles</option>
+            <option value="user">User</option>
+            <option value="instructor">Instructor</option>
+            <option value="admin">Admin</option>
+          </select>
+
+          <select [(ngModel)]="filterStatus" (change)="applyFilters()">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+
+        <div class="sort-group">
+          <select [(ngModel)]="sortBy" (change)="applyFilters()">
+            <option value="">Sort by...</option>
+            <option value="name-asc">Name A → Z</option>
+            <option value="name-desc">Name Z → A</option>
+            <option value="role">Role</option>
+          </select>
+        </div>
+      </div>
       <table class="admin-table">
         <thead>
           <tr>
@@ -20,56 +45,56 @@
           </tr>
         </thead>
         <tbody>
-          @for (user of users(); track user._id) {
-            <tr [class.is-archived]="user.deletedAt">
-              <td>
-                <div class="user-info">
-                  <span class="name">{{ user.nickname || user.firstName }}</span>
-                  <span class="email">{{ user.email }}</span>
-                </div>
-              </td>
+          @for (user of filteredUsers(); track user._id) {
+          <tr [class.is-archived]="user.deletedAt">
+            <td>
+              <div class="user-info clickable" (click)="onEditUser(user._id)">
+                <span class="name">{{ user.nickname || user.firstName }} ✎</span>
+                <span class="email">{{ user.email }}</span>
+              </div>
+            </td>
 
-              <td>
-                <div class="badge-group">
-                  <span class="badge badge-role">{{ user.role }}</span>
-                  @if (user.isInstructor) {
-                    <span class="badge badge-instructor">Instructor</span>
-                  }
-                  @if (user.isAdmin) {
-                    <span class="badge badge-admin">Admin</span>
-                  }
-                </div>
-              </td>
+            <td>
+              <div class="badge-group">
+                <span class="badge badge-role">{{ user.role }}</span>
+                @if (user.isInstructor) {
+                <span class="badge badge-instructor">Instructor</span>
+                }
+                @if (user.isAdmin) {
+                <span class="badge badge-admin">Admin</span>
+                }
+              </div>
+            </td>
 
-              <td>
-                <div class="status-wrapper">
-                  <span class="status-indicator" [class.active]="!user.deletedAt"></span>
-                  <span class="status-text" [class.text-active]="!user.deletedAt" [class.text-archived]="user.deletedAt">
-                    {{ user.deletedAt ? 'Archived' : 'Active' }}
-                  </span>
-                </div>
-              </td>
+            <td>
+              <div class="status-wrapper">
+                <span class="status-indicator" [class.active]="!user.deletedAt"></span>
+                <span class="status-text" [class.text-active]="!user.deletedAt" [class.text-archived]="user.deletedAt">
+                  {{ user.deletedAt ? 'Archived' : 'Active' }}
+                </span>
+              </div>
+            </td>
 
-              <td class="text-right">
-                <div class="action-wrapper">
-                  @if (!user.deletedAt) {
-                    <button class="btn-action btn-deactivate" (click)="onDeactivate(user)">
-                      Deactivate
-                    </button>
-                  } @else {
-                    <button class="btn-action btn-restore" (click)="onRestore(user)">
-                      Restore Account
-                    </button>
-                  }
-                </div>
-              </td>
-            </tr>
+            <td class="text-right">
+              <div class="action-wrapper">
+                @if (!user.deletedAt) {
+                <button class="btn-action btn-deactivate" (click)="onDeactivate(user)">
+                  Deactivate
+                </button>
+                } @else {
+                <button class="btn-action btn-restore" (click)="onRestore(user)">
+                  Restore Account
+                </button>
+                }
+              </div>
+            </td>
+          </tr>
           } @empty {
-            <tr>
-              <td colspan="4" class="empty-state">
-                No users found.
-              </td>
-            </tr>
+          <tr>
+            <td colspan="4" class="empty-state">
+              No users found.
+            </td>
+          </tr>
           }
         </tbody>
       </table>

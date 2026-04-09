@@ -24,7 +24,7 @@ router.post("/login", async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        nickname:user.nickname,
+        nickname: user.nickname,
         birthDate: user.birthDate,
         bio: user.bio,
         role: user.role || "user",
@@ -70,39 +70,55 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.put("/update/:id", async(req,res)=>{
-  try{
+router.put("/update/:id", async (req, res) => {
+  try {
     const userId = req.params.id;
 
-    const {firstName, lastName, nickname, birthDate, bio, isInstructor} = req.body;
+    const { firstName, lastName, nickname, birthDate, bio, isInstructor } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      {firstName, lastName, nickname, birthDate, bio, isInstructor},
-      {new:true}
+      { firstName, lastName, nickname, birthDate, bio, isInstructor },
+      { new: true }
     );
 
-    if(!updatedUser){
-      return res.status(404).json({message:"User not found"});
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
     }
 
     res.status(200).json({
       message: "Profile updated successfully",
-      user:{
+      user: {
         _id: updatedUser._id,
         email: updatedUser.email,
         firstName: updatedUser.firstName,
         lastName: updatedUser.lastName,
         nickname: updatedUser.nickname,
         birthDate: updatedUser.birthDate,
-        bio:updatedUser.bio,
-        role:updatedUser.role,
+        bio: updatedUser.bio,
+        role: updatedUser.role,
         isInstructor: updatedUser.isInstructor
       }
     });
 
-  }catch(error){
+  } catch (error) {
     console.error(error);
-    res.status(500).json({message:"Server Error"});
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ user });
+  } catch (err) {
+    console.error('Error fetching user:', err);
+    res.status(500).json({ message: 'Failed to fetch user' });
   }
 });
 
