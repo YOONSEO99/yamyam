@@ -80,3 +80,24 @@
   justify-content: center;
   font-weight: 700;
 }
+
+.instructor-link {
+  position: relative; // 배지 배치를 위해 필수!
+  display: inline-flex;
+  align-items: center;
+
+  .unread-badge {
+    position: absolute;
+    top: -5px;
+    right: -15px;
+    background-color: #ff4d4f; // 빨간색 알림
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+}

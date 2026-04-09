@@ -5,26 +5,36 @@
       <a routerLink="/search" routerLinkActive="active">Find Classes</a>
 
       @if (auth.isLoggedIn()) {
-        <a routerLink="/my-lessons" routerLinkActive="active">My Lessons</a>
-        <a routerLink="/favourites" routerLinkActive="active">Favourites</a>
+      <a routerLink="/my-lessons" routerLinkActive="active">My Lessons</a>
+      <a routerLink="/favourites" routerLinkActive="active">Favourites</a>
 
-        @if (auth.currentUser()?.isAdmin){
-          <a routerLink="/admin/users" routerLinkActive="active" class="admin-link">User Management</a>
+      @if (auth.currentUser()?.isAdmin){
+      <a routerLink="/admin/users" routerLinkActive="active" class="admin-link">User Management</a>
+      }
+
+      @if (auth.currentUser()?.isInstructor) {
+      <a routerLink="/instructor/messages" routerLinkActive="active" class="instructor-link">
+        Message
+        @if (unreadCount() > 0) {
+        <span class="unread-badge">{{ unreadCount() }}</span>
         }
+      </a>
+      }
       }
     </div>
     <div class="nav-actions">
       @if (auth.isLoggedIn()) {
-        <!-- @if (auth.isInstructor()) {
+      <!-- @if (auth.isInstructor()) {
           <a routerLink="/lessons/new" class="btn-primary">+ New Lesson</a>
         } -->
-        <a routerLink="/profile" class="avatar avatar-sm">
-          {{ auth.currentUser()?.nickname?.charAt(0)?.toUpperCase() }}
-        </a>
-        <button class="btn-ghost" (click)="auth.logout()">Log out</button>
+      <a routerLink="/profile" class="avatar avatar-sm">
+        {{ auth.currentUser()?.nickname?.charAt(0)?.toUpperCase() }}
+      </a>
+      <button class="btn-ghost" (click)="auth.logout()">Log out</button>
       } @else {
-        <a routerLink="/login" class="btn-ghost">Log in</a>
-        <a routerLink="/register" class="btn-primary">Sign up</a>
+      <a routerLink="/login" class="btn-ghost">Log in</a>
+      <a routerLink="/register" class="btn-primary">Sign up</a>
+
       }
     </div>
   </div>
