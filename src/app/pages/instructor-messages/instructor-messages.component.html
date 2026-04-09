@@ -1,0 +1,66 @@
+<div class="page-wrapper">
+    <div class="container">
+        <div class="admin-header">
+            <div class="header-content">
+                <h1 class="page-title">Instructor Inbox</h1>
+                <p class="page-sub">
+                    You have <span class="count-highlight">{{ threads().length }}</span> active conversations
+                </p>
+            </div>
+        </div>
+
+        <div class="table-card card">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Class Name</th>
+                        <th>Latest Message</th>
+                        <th>Date</th>
+                        <th class="text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (thread of threads(); track thread._id) {
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <span class="name">{{ thread.student.nickname || 'Student' }}</span>
+                                <span class="email">{{ thread.student.email }}</span>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="badge-group">
+                                <span class="badge badge-lesson">{{ thread.lesson.title || 'Class' }}</span>
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="msg-preview">{{ thread.lastMessage }}</span>
+                        </td>
+
+                        <td>
+                            <span class="date-text">{{ thread.updatedAt | date:'MMM d, h:mm a' }}</span>
+                        </td>
+
+                        <td>
+                            <div class="action-wrapper">
+                                <a [routerLink]="['/lessons', thread.lesson._id]" [queryParams]="{ studentId: thread.student._id }" class="btn-action btn-view">
+                                    View Chat
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            No messages yet.
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -31,6 +31,8 @@ export class LessonDetailComponent implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
+    const currentUser = this.auth.currentUser();
+
     if (id) {
       this.lessonService
         .getLessonById(id)
@@ -38,6 +40,15 @@ export class LessonDetailComponent implements OnInit {
         .subscribe({
           next: (data) => {
             this.lesson.set(data);
+            this.loadMessages(data._id);
+
+            if (currentUser) {
+              this.messageService.markAsRead(data._id, currentUser._id).subscribe({
+                next: () => {
+                  this.messageService.refreshNeeded$.next();
+                }
+              });
+            }
           },
           error: (err) => {
             console.error('Error ::', err)
@@ -101,24 +112,64 @@ export class LessonDetailComponent implements OnInit {
     this.lesson.update(l => l ? { ...l, isFavourited: !l.isFavourited } : l);
   }
 
-  sendMessage() {
-    if (!this.newMessage.trim()) return;
-    const msg: Message = {
-      _id: 'new-' + Date.now(), lessonId: '1',
-      senderId: 'me', receiverId: 'u1',
-      content: this.newMessage, isRead: false,
-      createdAt: new Date().toISOString(),
-    };
-    this.messages.update(m => [...m, msg]);
-    this.newMessage = '';
-  }
-
   formatTime(iso: string) {
     return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   }
 
   isUserObject(user: any): user is User {
     return user && typeof user === 'object' && 'nickname' in user;
+  }
+
+  loadMessages(lessonId: string) {
+    const currentUser = this.auth.currentUser();
+    if (!currentUser) return;
+
+    const queryStudentId = this.route.snapshot.queryParamMap.get('studentId');
+    const targetUserId = (this.isOwner && queryStudentId) ? queryStudentId : currentUser._id;
+
+    this.messageService.getMessages(lessonId, targetUserId).subscribe({
+      next: (data) => this.messages.set(data),
+      error: (err) => console.error('Failed to load messages : ', err)
+    });
+  }
+
+  sendMessage() {
+    const currentLesson = this.lesson();
+    const currentUser = this.auth.currentUser();
+
+    if (!this.newMessage.trim() || !currentLesson || !currentUser) return;
+    const inst = currentLesson.instructorId;
+    const instructorId = typeof inst === 'object' ? inst._id : inst;
+
+    let targetReceiverId = instructorId;
+
+    const queryStudentId = this.route.snapshot.queryParamMap.get('studentId');
+    if (this.isOwner && queryStudentId) {
+      targetReceiverId = queryStudentId;
+    }
+    const messageData = {
+      lessonId: currentLesson._id,
+      senderId: currentUser._id,
+      receiverId: targetReceiverId,
+      content: this.newMessage
+    };
+
+    this.messageService.sendMessage(messageData).subscribe({
+      next: (savedMsg) => {
+        this.messages.update(prev => [...prev, savedMsg]);
+        this.newMessage = '';
+      },
+      error: (err) => alert('Failed to send the message!')
+    });
+  }
+
+  isMyMessage(msg: Message): boolean {
+    const currentUserId = this.auth.currentUser()?._id;
+    if (!currentUserId) return false;
+
+    const msgSenderId = typeof msg.senderId === 'object' ? msg.senderId._id : msg.senderId;
+
+    return msgSenderId === currentUserId;
   }
 }
 
