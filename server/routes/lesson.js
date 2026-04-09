@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const lessonController = require("../controllers/lesson");
 
+router.get("/me", lessonController.getMyDashboardLessons);
 router.get("/", lessonController.getAllLessons);
+router.get("/favourites", lessonController.getFavouriteLessons);
+router.post("/:id/enroll", lessonController.enrollInLesson);
+router.post("/:id/favourites", lessonController.toggleFavourite);
 router.get("/:id", lessonController.getLessonById);
 router.post("/", lessonController.createLesson);
 router.put("/:id", lessonController.updateLesson);

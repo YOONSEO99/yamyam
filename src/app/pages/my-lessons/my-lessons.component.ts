@@ -1,10 +1,10 @@
 import { LessonService } from './../../services/lesson.service';
+import { AuthService } from '../../services/auth.service';
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Lesson } from '../../models/lesson';
-import { lessonMock } from '../../data/lesson-mock';
-import { finalize } from 'rxjs';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-my-lessons',
@@ -15,10 +15,12 @@ import { finalize } from 'rxjs';
 })
 export class MyLessonsComponent {
   private lessonService = inject(LessonService);
+  protected auth = inject(AuthService);
 
   activeTab = signal<'lessons' | 'favourites' | 'messages'>('lessons');
   isLoading = signal<boolean>(false);
   myLessons = signal<Lesson[]>([]);
+  deletingId = signal<string | null>(null);
 
   stats = { lessons: 0, students: 254, favourites: 42 };
 
@@ -55,5 +57,32 @@ export class MyLessonsComponent {
     } else {
       console.error('User data not found in storage. Please login again.');
     }
+  }
+
+  isLessonOwner(l: Lesson): boolean {
+    const uid = this.auth.currentUser()?._id;
+    if (!uid) return false;
+    const inst = l.instructorId;
+    const instId = typeof inst === 'string' ? inst : (inst as User)?._id;
+    return uid === instId;
+  }
+
+  confirmDelete(l: Lesson) {
+    if (!this.isLessonOwner(l)) return;
+    const uid = this.auth.currentUser()?._id;
+    if (!uid) return;
+    if (!confirm(`Delete "${l.title}"? This cannot be undone.`)) return;
+    this.deletingId.set(l._id);
+    this.lessonService.deleteLesson(l._id, uid).subscribe({
+      next: () => {
+        this.myLessons.update((list) => list.filter((x) => x._id !== l._id));
+        this.stats.lessons = this.myLessons().length;
+        this.deletingId.set(null);
+      },
+      error: () => {
+        this.deletingId.set(null);
+        alert('Could not delete this lesson.');
+      }
+    });
   }
 }

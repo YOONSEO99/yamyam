@@ -37,16 +37,96 @@
             <h2>About this class</h2>
             <p class="description">{{ l.description }}</p>
           </div>
+          <div class="detail-info-section">
+            <!-- 상단 3칸 메트릭 -->
+            <div class="info-metrics">
+              <div class="metric-card">
+                <span class="metric-label">Price</span>
+                <span class="metric-value">${{ l.price | number }}</span>
+                <span class="metric-sub">per session</span>
+              </div>
+              <div class="metric-card">
+                <span class="metric-label">Capacity</span>
+                <span class="metric-value">
+                  {{ l.currentBookings }}
+                  <span class="metric-denom">/ {{ l.maxCapacity }}</span>
+                </span>
+                <div class="capacity-bar">
+                  <div
+                    class="capacity-fill"
+                    [style.width.%]="(l.currentBookings / l.maxCapacity) * 100"
+                  ></div>
+                </div>
+              </div>
+              <div class="metric-card">
+                <span class="metric-label">Status</span>
+                <span
+                  class="status-badge"
+                  [class.status-active]="l.status === 'active'"
+                  [class.status-closed]="l.status === 'closed'"
+                >
+                  {{ l.status ?? "active" }}
+                </span>
+                <span class="metric-sub" style="margin-top: 6px">
+                  {{
+                    l.status === "closed"
+                      ? "No longer enrolling"
+                      : "Enrolling now"
+                  }}
+                </span>
+              </div>
+            </div>
 
+            <!-- Schedule -->
+            <div class="info-block">
+              <h3 class="info-block-title">Schedule</h3>
+              <div class="info-row">
+                <span class="info-label">Date</span>
+                <span class="info-value">
+                  {{ l.startDate | date: "MMM d, y" }}
+                  @if (l.endDate) {
+                    — {{ l.endDate | date: "MMM d, y" }}
+                  }
+                </span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Time</span>
+                <span class="info-value"
+                  >{{ l.startTime }} – {{ l.endTime }}</span
+                >
+              </div>
+            </div>
+
+            <!-- Location -->
+            <div class="info-block">
+              <h3 class="info-block-title">Location</h3>
+              <div class="info-row">
+                <span class="info-label">Address</span>
+                <span class="info-value">
+                  {{ l.streetNumber }} {{ l.streetName }}
+                  @if (l.unitNumber) {
+                    , Unit {{ l.unitNumber }}
+                  }
+                  <br />
+                  {{ l.city }}, {{ l.postalCode }}
+                </span>
+              </div>
+            </div>
+          </div>
           <div class="action-row">
-            <button
-              class="fav-btn"
-              [class.on]="l.isFavourited"
-              (click)="toggleFavourite()"
-            >
-              {{ l.isFavourited ? "♥" : "♡" }}
-              {{ l.isFavourited ? "Saved" : "Save class" }}
-            </button>
+            @if (canEnroll) {
+              <button
+                type="button"
+                class="btn-primary"
+                [disabled]="enrollPending()"
+                (click)="enroll()"
+              >
+                {{ enrollPending() ? "Joining…" : "Join class" }}
+              </button>
+            }
+            @if (isEnrolled && !isOwner) {
+              <span class="enrolled-pill">You’re enrolled</span>
+            }
             @if (isOwner) {
               <a [routerLink]="['/lessons', l._id, 'edit']" class="btn-outline"
                 >✎ Edit Lesson</a

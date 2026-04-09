@@ -4,7 +4,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { LessonService } from '../../services/lesson.service';
+import { AuthService } from '../../services/auth.service';
 import { Lesson } from '../../models/lesson';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-edit-lesson',
@@ -17,6 +19,7 @@ export class EditLessonComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private lessonService = inject(LessonService);
+  private auth = inject(AuthService);
 
   lessonId = '';
   loading = signal(true);
@@ -43,6 +46,10 @@ export class EditLessonComponent implements OnInit {
     this.lessonId = id;
     this.lessonService.getLessonById(id).subscribe({
       next: (lesson) => {
+        if (!this.isLessonOwner(lesson)) {
+          this.router.navigate(['/lessons', id]);
+          return;
+        }
         this.patchForm(lesson);
         this.loading.set(false);
       },
@@ -51,6 +58,14 @@ export class EditLessonComponent implements OnInit {
         this.loading.set(false);
       }
     });
+  }
+
+  private isLessonOwner(lesson: Lesson): boolean {
+    const uid = this.auth.currentUser()?._id;
+    if (!uid) return false;
+    const inst = lesson.instructorId;
+    const instId = typeof inst === 'string' ? inst : (inst as User)?._id;
+    return uid === instId;
   }
 
   private patchForm(lesson: Lesson) {
