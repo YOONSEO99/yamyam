@@ -1,112 +1,196 @@
 <div class="page-wrapper">
   @if (lesson(); as l) {
-    <div class="container detail-layout">
-      <!-- MAIN -->
-      <div class="main-col">
-        <div
-          class="thumb-hero"
-          [style.background]="'linear-gradient(135deg, #f0ebfa, #e4d8f8)'"
-        >
-          <span class="cat-badge">{{ l.category }}</span>
-        </div>
-
-        <div class="class-info card">
-          <div class="class-header">
-            <h1 class="class-title">{{ l.title }}</h1>
-            <div class="class-meta">
-              <div class="instructor-row">
-                <span class="avatar avatar-sm">{{
-                  instructorFromLesson(l)?.nickname?.charAt(0)
-                }}</span>
-                <span class="inst-name">{{
-                  instructorFromLesson(l)?.nickname
-                }}</span>
-              </div>
-              @if (l.rating) {
-                <span class="star-rating"
-                  >★ {{ l.rating | number: "1.1-1" }}</span
-                >
-              }
-              <span class="students">{{ l.studentsCount }} students</span>
-            </div>
-          </div>
-
-          <hr class="divider" />
-
-          <div class="description-section">
-            <h2>About this class</h2>
-            <p class="description">{{ l.description }}</p>
-          </div>
-
-          <div class="action-row">
-            <button
-              class="fav-btn"
-              [class.on]="l.isFavourited"
-              (click)="toggleFavourite()"
-            >
-              {{ l.isFavourited ? "♥" : "♡" }}
-              {{ l.isFavourited ? "Saved" : "Save class" }}
-            </button>
-            @if (isOwner) {
-              <a [routerLink]="['/lessons', l._id, 'edit']" class="btn-outline"
-                >✎ Edit Lesson</a
-              >
-            }
-          </div>
-        </div>
+  <div class="container detail-layout">
+    <!-- MAIN -->
+    <div class="main-col">
+      <div class="thumb-hero" [style.background]="'linear-gradient(135deg, #f0ebfa, #e4d8f8)'">
+        <span class="cat-badge">{{ l.category }}</span>
       </div>
 
-      <!-- SIDEBAR -->
-      <div class="side-col">
-        <!-- Instructor card -->
-        <div class="card instructor-card">
-          <h3 class="side-title">Instructor</h3>
-          <div class="inst-profile">
-            <span class="avatar avatar-lg">{{
-              instructorFromLesson(l)?.nickname?.charAt(0)
-            }}</span>
-            <div>
-              <div class="inst-full-name">
-                {{ instructorFromLesson(l)?.nickname }}
-              </div>
-              <div class="inst-role">Verified Instructor</div>
+      <div class="class-info card">
+        <div class="class-header">
+          <h1 class="class-title">{{ l.title }}</h1>
+          <div class="class-meta">
+            <div class="instructor-row">
+              <span class="avatar avatar-sm">{{
+                instructorFromLesson(l)?.nickname?.charAt(0)
+                }}</span>
+              <span class="inst-name">{{
+                instructorFromLesson(l)?.nickname
+                }}</span>
             </div>
+            @if (l.rating) {
+            <span class="star-rating">★ {{ l.rating | number: "1.1-1" }}</span>
+            }
+            <span class="students">{{ l.studentsCount }} students</span>
           </div>
-          <p class="inst-bio">
-            Senior developer with 10+ years of experience. Helped over 3,000
-            students land their first developer jobs.
-          </p>
         </div>
 
-        <!-- Messages -->
-        <div class="card messages-card">
-          <h3 class="side-title">Message Instructor</h3>
-          <div class="message-thread">
-            @for (msg of messages(); track msg._id) {
-              <div class="msg-row" [class.mine]="msg.senderId === 'me'">
-                @if (msg.senderId !== "me") {
-                  <span class="avatar avatar-xs">{{
-                    senderUser(msg.senderId)?.nickname?.charAt(0)
-                  }}</span>
-                }
-                <div class="msg-bubble-wrap">
-                  <div class="msg-bubble">{{ msg.content }}</div>
-                  <div class="msg-time">{{ formatTime(msg.createdAt) }}</div>
-                </div>
+        <hr class="divider" />
+
+        <div class="description-section">
+          <h2>About this class</h2>
+          <p class="description">{{ l.description }}</p>
+        </div>
+        <div class="detail-info-section">
+
+          <div class="info-metrics">
+            <div class="metric-card">
+              <span class="metric-label">Price</span>
+              <span class="metric-value">${{ l.price | number }}</span>
+              <span class="metric-sub">per session</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Capacity</span>
+              <span class="metric-value">
+                {{ l.currentBookings }}
+                <span class="metric-denom">/ {{ l.maxCapacity }}</span>
+              </span>
+              <div class="capacity-bar">
+                <div class="capacity-fill" [style.width.%]="(l.currentBookings / l.maxCapacity) * 100"></div>
               </div>
-            }
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Status</span>
+              <span class="status-badge" [class.status-active]="l.status === 'active'"
+                [class.status-closed]="l.status === 'closed'">
+                {{ l.status ?? "active" }}
+              </span>
+              <span class="metric-sub" style="margin-top: 6px">
+                {{
+                l.status === "closed"
+                ? "No longer enrolling"
+                : "Enrolling now"
+                }}
+              </span>
+            </div>
           </div>
-          <div class="msg-input-row">
-            <input
-              type="text"
-              [(ngModel)]="newMessage"
-              placeholder="Ask the instructor..."
-              (keyup.enter)="sendMessage()"
-            />
-            <button class="send-btn" (click)="sendMessage()">Send</button>
+
+          <!-- Schedule -->
+          <div class="info-block">
+            <h3 class="info-block-title">Schedule</h3>
+            <div class="info-row">
+              <span class="info-label">Date</span>
+              <span class="info-value">
+                {{ l.startDate | date: "MMM d, y" }}
+                @if (l.endDate) {
+                — {{ l.endDate | date: "MMM d, y" }}
+                }
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Time</span>
+              <span class="info-value">{{ l.startTime }} – {{ l.endTime }}</span>
+            </div>
           </div>
+
+          <!-- Location -->
+          <div class="info-block">
+            <h3 class="info-block-title">Location</h3>
+            <div class="info-row">
+              <span class="info-label">Address</span>
+              <span class="info-value">
+                {{ l.streetNumber }} {{ l.streetName }}
+                @if (l.unitNumber) {
+                , Unit {{ l.unitNumber }}
+                }
+                <br />
+                {{ l.city }}, {{ l.postalCode }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="action-row">
+          @if (canEnroll) {
+          <button type="button" class="btn-primary" [disabled]="enrollPending()" (click)="enroll()">
+            {{ enrollPending() ? "Joining…" : "Join class" }}
+          </button>
+          }
+          @if (isEnrolled && !isOwner) {
+          <span class="enrolled-pill">You’re enrolled</span>
+          }
+          @if (isOwner) {
+          <a [routerLink]="['/lessons', l._id, 'edit']" class="btn-outline">✎ Edit Lesson</a>
+          }
         </div>
       </div>
     </div>
+
+    <!-- SIDEBAR -->
+    <div class="side-col">
+      <!-- Instructor card -->
+      <div class="card instructor-card">
+        <div class="inst-profile-header">
+          <span class="avatar avatar-lg">
+            {{
+            isUserObject(l.instructorId)
+            ? l.instructorId.nickname?.charAt(0)
+            : "?"
+            }}
+          </span>
+
+          <div class="inst-info-main">
+            <div class="name-badge-group">
+              <h3 class="inst-full-name">
+                {{
+                isUserObject(l.instructorId)
+                ? l.instructorId.nickname
+                : "Instructor"
+                }}
+              </h3>
+
+              <div class="verified-badge-box">
+                <svg class="check-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                </svg>
+                <span class="verified-text">Verified</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="inst-body">
+          <p class="inst-bio">
+            {{
+            isUserObject(l.instructorId)
+            ? l.instructorId.bio
+            : "This instructor has not provided a biography yet."
+            }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="card messages-card">
+        <h3 class="side-title">Message Instructor</h3>
+        <div class="message-thread">
+          @for (msg of messages(); track msg._id) {
+
+          <div class="msg-row" [class.mine]="isMyMessage(msg)">
+
+            @if (!isMyMessage(msg)) {
+            <span class="avatar avatar-xs">
+              {{ senderUser(msg.senderId)?.nickname?.charAt(0) || '?' }}
+            </span>
+            }
+
+            <div class="msg-bubble-wrap">
+              <div class="msg-bubble">{{ msg.content }}</div>
+              <div class="msg-time">{{ formatTime(msg.createdAt) }}</div>
+            </div>
+
+          </div>
+          }
+        </div>
+        <div class="msg-input-row">
+          <input type="text" [(ngModel)]="newMessage" placeholder="Ask the instructor..."
+            (keyup.enter)="sendMessage()" />
+          <button class="send-btn" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   }
 </div>

@@ -11,6 +11,7 @@ export const routes: Routes = [
   { path: 'login', loadComponent: () => import('@app/pages/login/login.component').then(m => m.LoginComponent) },
   { path: 'register', loadComponent: () => import('@app/pages/register/register.component').then(m => m.RegisterComponent) },
   { path: 'profile', loadComponent: () => import('@app/pages/profile/profile.component').then(m => m.ProfileComponent) },
-  { path: 'users', loadComponent: () => import('@app/pages/all-users/all-users.component').then(m => m.AllUsersComponent) },
+  { path:'admin/users', loadComponent: ()=> import('@app/pages/admin/user-management/user-management.component').then(m => m.UserManagementComponent)},
+  { path: 'instructor/messages', loadComponent: () => import('@app/pages/instructor-messages/instructor-messages.component').then(m => m.InstructorMessagesComponent) },
   { path: '**', redirectTo: '' }
 ];

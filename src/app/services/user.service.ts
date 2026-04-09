@@ -18,4 +18,12 @@ export class UserService {
   updateProfile(data: FormData) {
     return this.http.patch<User>(`${this.API}/users/me`, data);
   }
+
+  softDeleteUser(id:string){
+    return this.http.patch<User>(`${this.API}/users/${id}/soft-delete`, {});
+  }
+
+  restoreUser(id:string){
+    return this.http.patch<User>(`${this.API}/users/${id}/restore`, {});
+  }
 }

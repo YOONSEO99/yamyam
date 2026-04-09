@@ -1,0 +1,49 @@
+.admin-header {
+    margin-bottom: 32px;
+    .page-title { font-size: 28px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; margin-bottom: 6px; }
+    .page-sub { font-size: 14px; color: var(--text-secondary); .count-highlight { color: var(--yam); font-weight: 700; } }
+  }
+  
+  .table-card { padding: 0; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); overflow: hidden; }
+  
+  .admin-table {
+    width: 100%; border-collapse: collapse; background: #fff;
+    th { padding: 16px 24px; background: #fcfcfc; border-bottom: 1px solid var(--gray-2); color: var(--text-secondary); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; }
+    td { padding: 20px 24px; border-bottom: 1px solid #f1f1f1; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #fafafa; }
+  }
+  
+  .user-info {
+    display: flex; flex-direction: column; gap: 2px;
+    .name { font-weight: 600; font-size: 15px; color: var(--text-primary); }
+    .email { font-size: 13px; color: var(--text-secondary); }
+  }
+  
+  .badge-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+  .text-right { text-align: right; }
+  
+  .badge-lesson { background: var(--yam-light); color: var(--yam); }
+  
+  .msg-preview {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 14px;
+    color: var(--text-primary);
+    max-width: 250px;
+  }
+  
+  .date-text { font-size: 13px; color: var(--text-secondary); }
+  
+  .btn-action {
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; display: inline-block; text-decoration: none;
+    &.btn-view {
+      background: #fff; color: var(--yam); border-color: var(--yam-light);
+      &:hover { background: var(--yam-light); transform: translateY(-1px); }
+    }
+  }
+  
+  .empty-state { padding: 60px; text-align: center; color: #9ca3af; font-style: italic; }

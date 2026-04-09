@@ -6,7 +6,8 @@
         @for (l of lessons(); track l._id) {
           <app-lesson-card
             [lesson]="l"
-            (favouriteToggled)="onFavouriteToggled($event)"
+            [removeMode]="true"
+            (removeRequested)="onRemoveRequested($event)"
           />
         }
       </div>

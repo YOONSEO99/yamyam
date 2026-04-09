@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth.service';
 import { Lesson } from '../../models/lesson';
 import { Message } from '../../models/message';
 import { User } from '../../models/user';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-lesson-detail',
@@ -23,42 +24,79 @@ export class LessonDetailComponent implements OnInit {
   auth = inject(AuthService);
 
   lesson = signal<Lesson | null>(null);
+  isLoading = signal(true);
+
   messages = signal<Message[]>([]);
   newMessage = '';
 
-  mockLesson: Lesson = {
-    _id: '1', title: 'React 19 + TypeScript Complete Bootcamp',
-    description: `This comprehensive course takes you from React fundamentals all the way to building production-ready applications with TypeScript. You'll learn the latest React 19 features including Server Components, the new use() hook, signals patterns, and the complete TypeScript integration workflow.\n\nBy the end of this course you'll be able to build, test, and deploy full React applications confidently.`,
-    category: 'IT·Dev', status: 'published',
-    city: 'Seoul', streetName: 'Teheran-ro', streetNumber: '123', postalCode: '06142',
-    startDate: '2025-04-01', startTime: '19:00', endTime: '21:00',
-    maxCapacity: 30, currentBookings: 128, price: 89000,
-    instructorId: { _id: 'u1', email: 'minjun@example.com', firstName: 'MinJun', lastName: 'Kim', birthDate: '1990-01-01', nickname: 'MinJun Kim' } satisfies User,
-    rating: 4.9, studentsCount: 128, isFavourited: true,
-    createdAt: '2024-11-01', updatedAt: '2025-01-15'
-  };
-
-  mockMessages: Message[] = [
-    { _id: 'm1', lessonId: '1', senderId: 'me', receiverId: 'u1', content: 'Hi! Is prior TypeScript experience required for this course?', isRead: true, createdAt: '2025-03-20T14:34:00Z' },
-    {
-      _id: 'm2', lessonId: '1',
-      senderId: { _id: 'u1', email: 'minjun@example.com', firstName: 'MinJun', lastName: 'Kim', birthDate: '1990-01-01', nickname: 'MinJun Kim' } satisfies User,
-      receiverId: 'me',
-      content: 'Not at all! We cover TypeScript fundamentals at the start. Beginners are very welcome 😊',
-      isRead: true,
-      createdAt: '2025-03-20T15:01:00Z',
-    },
-  ];
-
   ngOnInit() {
-    this.lesson.set(this.mockLesson);
-    this.messages.set(this.mockMessages);
+    const id = this.route.snapshot.paramMap.get('id');
+    const currentUser = this.auth.currentUser();
+
+    if (id) {
+      this.lessonService
+        .getLessonById(id)
+        .pipe(finalize(() => this.isLoading.set(false)))
+        .subscribe({
+          next: (data) => {
+            this.lesson.set(data);
+            this.loadMessages(data._id);
+
+            if (currentUser) {
+              this.messageService.markAsRead(data._id, currentUser._id).subscribe({
+                next: () => {
+                  this.messageService.refreshNeeded$.next();
+                }
+              });
+            }
+          },
+          error: (err) => {
+            console.error('Error ::', err)
+          }
+
+        });
+    }
   }
 
   get isOwner() {
     const inst = this.lesson()?.instructorId;
     const instId = typeof inst === 'string' ? inst : inst?._id;
     return this.auth.currentUser()?._id === instId;
+  }
+
+  get isEnrolled(): boolean {
+    const l = this.lesson();
+    const uid = this.auth.currentUser()?._id;
+    if (!l || !uid) return false;
+    const ids = this.auth.currentUser()?.enrolledLessonIds ?? [];
+    return ids.includes(l._id);
+  }
+
+  get canEnroll(): boolean {
+    const l = this.lesson();
+    if (!l || !this.auth.isLoggedIn() || this.isOwner) return false;
+    if (this.isEnrolled) return false;
+    const s = l.status ?? 'active';
+    return s !== 'draft';
+  }
+
+  enrollPending = signal(false);
+
+  enroll() {
+    const l = this.lesson();
+    const uid = this.auth.currentUser()?._id;
+    if (!l || !uid || !this.canEnroll) return;
+    this.enrollPending.set(true);
+    this.lessonService.enrollInLesson(l._id, uid).subscribe({
+      next: (res) => {
+        this.auth.patchCurrentUser({ enrolledLessonIds: res.enrolledLessonIds });
+        this.enrollPending.set(false);
+      },
+      error: (err) => {
+        console.error('Enroll failed:', err);
+        this.enrollPending.set(false);
+      }
+    });
   }
 
   instructorFromLesson(lesson: Lesson): User | undefined {
@@ -74,19 +112,64 @@ export class LessonDetailComponent implements OnInit {
     this.lesson.update(l => l ? { ...l, isFavourited: !l.isFavourited } : l);
   }
 
-  sendMessage() {
-    if (!this.newMessage.trim()) return;
-    const msg: Message = {
-      _id: 'new-' + Date.now(), lessonId: '1',
-      senderId: 'me', receiverId: 'u1',
-      content: this.newMessage, isRead: false,
-      createdAt: new Date().toISOString(),
-    };
-    this.messages.update(m => [...m, msg]);
-    this.newMessage = '';
-  }
-
   formatTime(iso: string) {
     return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   }
+
+  isUserObject(user: any): user is User {
+    return user && typeof user === 'object' && 'nickname' in user;
+  }
+
+  loadMessages(lessonId: string) {
+    const currentUser = this.auth.currentUser();
+    if (!currentUser) return;
+
+    const queryStudentId = this.route.snapshot.queryParamMap.get('studentId');
+    const targetUserId = (this.isOwner && queryStudentId) ? queryStudentId : currentUser._id;
+
+    this.messageService.getMessages(lessonId, targetUserId).subscribe({
+      next: (data) => this.messages.set(data),
+      error: (err) => console.error('Failed to load messages : ', err)
+    });
+  }
+
+  sendMessage() {
+    const currentLesson = this.lesson();
+    const currentUser = this.auth.currentUser();
+
+    if (!this.newMessage.trim() || !currentLesson || !currentUser) return;
+    const inst = currentLesson.instructorId;
+    const instructorId = typeof inst === 'object' ? inst._id : inst;
+
+    let targetReceiverId = instructorId;
+
+    const queryStudentId = this.route.snapshot.queryParamMap.get('studentId');
+    if (this.isOwner && queryStudentId) {
+      targetReceiverId = queryStudentId;
+    }
+    const messageData = {
+      lessonId: currentLesson._id,
+      senderId: currentUser._id,
+      receiverId: targetReceiverId,
+      content: this.newMessage
+    };
+
+    this.messageService.sendMessage(messageData).subscribe({
+      next: (savedMsg) => {
+        this.messages.update(prev => [...prev, savedMsg]);
+        this.newMessage = '';
+      },
+      error: (err) => alert('Failed to send the message!')
+    });
+  }
+
+  isMyMessage(msg: Message): boolean {
+    const currentUserId = this.auth.currentUser()?._id;
+    if (!currentUserId) return false;
+
+    const msgSenderId = typeof msg.senderId === 'object' ? msg.senderId._id : msg.senderId;
+
+    return msgSenderId === currentUserId;
+  }
 }
+
