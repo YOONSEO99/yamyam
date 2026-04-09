@@ -8,6 +8,7 @@ import { AuthResponse, User } from '../models/user';
 export class AuthService {
   private readonly API = 'http://localhost:3000/api/v1';
   currentUser = signal<User | null>(null);
+  private sessionTimeout: any;
 
   constructor(private http: HttpClient, private router: Router) {
     const stored = localStorage.getItem('user');
@@ -33,10 +34,19 @@ export class AuthService {
     this.router.navigate(['/']);
   }
 
+  setSessionTimeout() {
+    if (this.sessionTimeout) clearTimeout(this.sessionTimeout);
+    this.sessionTimeout = setTimeout(() => {
+      alert('Session expired. Plese login again');
+      this.logout();
+    }, 3600000);
+  }
+
   private storeAuth(res: AuthResponse) {
     localStorage.setItem('token', res.token);
     localStorage.setItem('user', JSON.stringify(res.user));
     this.currentUser.set(res.user);
+    this.setSessionTimeout();
   }
 
   getToken() { return localStorage.getItem('token'); }
