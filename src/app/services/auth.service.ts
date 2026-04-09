@@ -41,5 +41,18 @@ export class AuthService {
 
   getToken() { return localStorage.getItem('token'); }
   isLoggedIn() { return !!this.getToken(); }
-  isInstructor() { return this.currentUser()?.role === 'instructor'; }
+  /** True if role is instructor or the profile flag is set (DB/API can use either). */
+  isInstructor() {
+    const u = this.currentUser();
+    if (!u) return false;
+    return u.role === 'instructor' || u.isInstructor === true;
+  }
+
+  patchCurrentUser(partial: Partial<User>) {
+    const u = this.currentUser();
+    if (!u) return;
+    const next = { ...u, ...partial };
+    this.currentUser.set(next);
+    localStorage.setItem('user', JSON.stringify(next));
+  }
 }

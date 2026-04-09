@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { LessonCardComponent } from '../../shared/lesson-card/lesson-card.component';
 import { Lesson } from '../../models/lesson';
-import { lessonMock } from '../../data/lesson-mock';
+import { LessonService } from '../../services/lesson.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-favourites',
@@ -12,13 +13,52 @@ import { lessonMock } from '../../data/lesson-mock';
   templateUrl: './favourites.component.html',
   styleUrl: './favourites.component.scss'
 })
-export class FavouritesComponent {
-  lessons = signal<Lesson[]>([
-    lessonMock({ _id: '1', title: 'React 19 + TypeScript Complete Bootcamp', description: '', category: 'IT·Dev', isFavourited: true, instructorId: 'u1', instructorNickname: 'MinJun Kim', rating: 4.9, studentsCount: 128, createdAt: '', updatedAt: '' }),
-    lessonMock({ _id: '6', title: 'Angular 19 Signals & Standalone Architecture', description: '', category: 'IT·Dev', isFavourited: true, instructorId: 'u6', instructorNickname: 'Jiyeon Han', rating: 4.8, studentsCount: 65, createdAt: '', updatedAt: '' }),
-  ]);
+export class FavouritesComponent implements OnInit {
+  private lessonService = inject(LessonService);
 
-  onFavouriteToggled(lessonId: string) {
-    this.lessons.update(list => list.filter(l => l._id !== lessonId));
+  allFavouriteLessons = signal<Lesson[]>([]);
+  isLoading = signal<boolean>(false);
+
+  // ✅ service signal 기준으로 필터링 → 메인에서 토글해도 자동 반영
+  lessons = computed(() => {
+    const ids = this.lessonService.favouriteIds();
+    return this.allFavouriteLessons().filter(l => ids.has(l._id));
+  });
+
+  ngOnInit(): void {
+    this.loadFavourites();
+  }
+
+  loadFavourites() {
+    const userJson = localStorage.getItem('user');
+    if (!userJson) {
+      console.error('User data not found');
+      return;
+    }
+
+    try {
+      const userData = JSON.parse(userJson);
+      const myId = userData._id;
+      if (!myId) return;
+
+      this.isLoading.set(true);
+      this.lessonService
+        .getFavouriteLessons(myId)
+        .pipe(finalize(() => this.isLoading.set(false)))
+        .subscribe({
+          next: (data) => {
+            this.allFavouriteLessons.set(data);
+          },
+          error: (err) => console.error('Error: ', err)
+        });
+    } catch (e) {
+      console.error('JSON parsing error:', e);
+    }
+  }
+
+  onFavouriteToggled(_lessonId: string) { }
+
+  onRemoveRequested(lessonId: string) {
+    this.allFavouriteLessons.update(list => list.filter(l => l._id !== lessonId));
   }
 }
