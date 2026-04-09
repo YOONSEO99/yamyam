@@ -29,7 +29,11 @@ router.post("/login", async (req, res) => {
         bio: user.bio,
         role: user.role || "user",
         isInstructor: user.isInstructor,
-        isAdmin: user.isAdmin
+        isAdmin: user.isAdmin,
+        favoriteLessonIds: user.favoriteLessonIds || [],
+        enrolledLessonIds: (user.enrolledLessonIds || []).map((id) =>
+          id.toString(),
+        ),
       },
     });
   } catch (error) {

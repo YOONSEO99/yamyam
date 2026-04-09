@@ -14,11 +14,10 @@ import { User } from '../../models/user';
 })
 export class LessonCardComponent {
   @Input() lesson!: Lesson;
-  @Output() favouriteToggled = new EventEmitter<{ id: string; isFavourited: boolean }>();
+  @Output() favouriteToggled = new EventEmitter<string>();
 
   private lessonService = inject(LessonService);
 
-  // ✅ service의 signal을 직접 참조 → 어느 컴포넌트에서 바꿔도 동기화
   get isFavourited(): boolean {
     return this.lessonService.isFavourited(this.lesson._id);
   }
@@ -55,14 +54,33 @@ export class LessonCardComponent {
     const userId = JSON.parse(userJson)._id;
     const newState = !this.isFavourited;
 
-    // ✅ service에서 optimistic update + 롤백 처리까지 담당
     this.lessonService.toggleFavouriteLesson(this.lesson._id, userId).subscribe({
       next: () => {
-        this.favouriteToggled.emit({ id: this.lesson._id, isFavourited: newState });
+        this.favouriteToggled.emit(this.lesson._id);
       },
       error: (err) => {
         console.error('toggle error:', err);
         alert('An error occurred while processing. Please try again.');
+      }
+    });
+  }
+
+  @Input() removeMode = false;
+  @Output() removeRequested = new EventEmitter<string>();
+
+  onRemove(e: Event) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const userJson = localStorage.getItem('user');
+    if (!userJson) return;
+    const userId = JSON.parse(userJson)._id;
+
+    this.lessonService.toggleFavouriteLesson(this.lesson._id, userId).subscribe({
+      next: () => this.removeRequested.emit(this.lesson._id),
+      error: (err) => {
+        console.error('remove error:', err);
+        alert('An error occurred. Please try again.');
       }
     });
   }

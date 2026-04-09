@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Lesson } from '../models/lesson';
 import { Observable, tap } from 'rxjs';
@@ -7,20 +7,13 @@ import { Observable, tap } from 'rxjs';
 export class LessonService {
   private readonly API = 'http://localhost:3000/api/v1';
 
-  // ✅ 전역 favourite ID 집합 - single source of truth
   private _favouriteIds = signal<Set<string>>(new Set());
   readonly favouriteIds = this._favouriteIds.asReadonly();
 
   constructor(private http: HttpClient) { }
 
-  // ✅ 초기화: 로그인 후 또는 앱 시작 시 한 번 호출
-  loadFavouriteIds(userId: string): void {
-    this.getFavouriteLessons(userId).subscribe({
-      next: (lessons) => {
-        this._favouriteIds.set(new Set(lessons.map(l => l._id)));
-      },
-      error: (err) => console.error('Failed to load favourites', err)
-    });
+  initFavourites(ids: string[]) {
+    this._favouriteIds.set(new Set(ids));
   }
 
   isFavourited(lessonId: string): boolean {
@@ -41,27 +34,35 @@ export class LessonService {
   createLesson(body: any) {
     const userStr = localStorage.getItem('user');
     let currentUserId = '';
-    if (userStr) {
-      const userObj = JSON.parse(userStr);
-      currentUserId = userObj._id;
-    }
+    if (userStr) currentUserId = JSON.parse(userStr)._id;
     return this.http.post<Lesson>(`${this.API}/lessons`, {
       ...body,
       instructorId: currentUserId
     });
   }
 
-  updateLesson(
-    id: string,
-    data: Partial<Pick<Lesson, 'title' | 'description' | 'category' | 'status'>>
-  ) {
+  updateLesson(id: string, data: Partial<Pick<Lesson, 'title' | 'description' | 'category' | 'status'>>) {
     return this.http.put<Lesson>(`${this.API}/lessons/${id}`, data);
   }
 
-  getMyLessons(userId: string): Observable<Lesson[]> {
-    return this.http.get<Lesson[]>(`${this.API}/lessons`, {
-      params: { instructorId: userId }
+  deleteLesson(id: string, userId: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.API}/lessons/${id}`, {
+      params: { userId }
     });
+  }
+
+  /** Dashboard: lessons the user enrolled in (public only) + lessons they teach (any status) */
+  getMyLessons(userId: string): Observable<Lesson[]> {
+    return this.http.get<Lesson[]>(`${this.API}/lessons/me`, {
+      params: { userId }
+    });
+  }
+
+  enrollInLesson(lessonId: string, userId: string): Observable<{ enrolledLessonIds: string[] }> {
+    return this.http.post<{ enrolledLessonIds: string[] }>(
+      `${this.API}/lessons/${lessonId}/enroll`,
+      { userId }
+    );
   }
 
   getFavouriteLessons(userId: string) {
@@ -71,34 +72,22 @@ export class LessonService {
   toggleFavouriteLesson(lessonId: string, userId: string): Observable<any> {
     const wasFavourited = this._favouriteIds().has(lessonId);
 
-    // ✅ Optimistic update - 즉시 UI 반영
     this._favouriteIds.update(set => {
       const next = new Set(set);
-      if (wasFavourited) {
-        next.delete(lessonId);
-      } else {
-        next.add(lessonId);
-      }
+      wasFavourited ? next.delete(lessonId) : next.add(lessonId);
       return next;
     });
 
-    return this.http
-      .post(`${this.API}/lessons/${lessonId}/favourites`, { userId })
-      .pipe(
-        // ✅ 실패 시 롤백
-        tap({
-          error: () => {
-            this._favouriteIds.update(set => {
-              const rollback = new Set(set);
-              if (wasFavourited) {
-                rollback.add(lessonId);
-              } else {
-                rollback.delete(lessonId);
-              }
-              return rollback;
-            });
-          }
-        })
-      );
+    return this.http.post(`${this.API}/lessons/${lessonId}/favourites`, { userId }).pipe(
+      tap({
+        error: () => {
+          this._favouriteIds.update(set => {
+            const rollback = new Set(set);
+            wasFavourited ? rollback.add(lessonId) : rollback.delete(lessonId);
+            return rollback;
+          });
+        }
+      })
+    );
   }
 }

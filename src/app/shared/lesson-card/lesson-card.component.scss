@@ -124,3 +124,22 @@
   font-size: 12px;
   color: var(--text-muted);
 }
+.remove-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid #e24b4a;
+  color: #e24b4a;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    background: #e24b4a;
+    color: #fff;
+  }
+}

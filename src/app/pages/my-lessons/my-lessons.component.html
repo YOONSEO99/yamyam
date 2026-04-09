@@ -2,22 +2,9 @@
   <div class="container">
     <div class="dashboard-header">
       <h1>My Dashboard</h1>
-      <a routerLink="/lessons/new" class="btn-primary">+ New Lesson</a>
-    </div>
-
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-n">{{ stats.lessons }}</div>
-        <div class="stat-l">Lessons Created</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-n">{{ stats.students }}</div>
-        <div class="stat-l">Total Students</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-n">{{ stats.favourites }}</div>
-        <div class="stat-l">Times Favourited</div>
-      </div>
+      @if (auth.isInstructor()) {
+        <a routerLink="/lessons/new" class="btn-primary">+ New Lesson</a>
+      }
     </div>
 
     <div class="tab-bar">
@@ -26,12 +13,6 @@
         (click)="activeTab.set('lessons')"
       >
         My Lessons
-      </button>
-      <button
-        [class.active]="activeTab() === 'favourites'"
-        (click)="activeTab.set('favourites')"
-      >
-        Saved Lessons
       </button>
       <button
         [class.active]="activeTab() === 'messages'"
@@ -80,12 +61,28 @@
                 @if (l.rating) {
                   <span class="star-rating">★ {{ l.rating }}</span>
                 }
-                <a [routerLink]="['/lessons', l._id]" class="btn-ghost">View</a>
-                <a
-                  [routerLink]="['/lessons', l._id, 'edit']"
-                  class="btn-outline"
-                  >Edit</a
-                >
+                <div class="lesson-row-action-btns">
+                  <a
+                    [routerLink]="['/lessons', l._id]"
+                    class="action-btn action-btn--ghost"
+                    >View</a
+                  >
+                  @if (isLessonOwner(l)) {
+                    <a
+                      [routerLink]="['/lessons', l._id, 'edit']"
+                      class="action-btn action-btn--outline"
+                      >Edit</a
+                    >
+                    <button
+                      type="button"
+                      class="action-btn action-btn--danger"
+                      [disabled]="deletingId() === l._id"
+                      (click)="confirmDelete(l)"
+                    >
+                      {{ deletingId() === l._id ? "Deleting…" : "Delete" }}
+                    </button>
+                  }
+                </div>
               </div>
             </div>
           } @empty {

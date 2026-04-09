@@ -56,9 +56,9 @@ export class FavouritesComponent implements OnInit {
     }
   }
 
-  // ✅ emit 타입 맞춤 - 실제로 목록 필터는 computed()가 자동 처리
-  onFavouriteToggled(event: { id: string; isFavourited: boolean }) {
-    // computed()가 service signal 기준으로 자동 필터링하므로 별도 처리 불필요
-    // 필요 시 추가 로직 삽입 가능
+  onFavouriteToggled(_lessonId: string) { }
+
+  onRemoveRequested(lessonId: string) {
+    this.allFavouriteLessons.update(list => list.filter(l => l._id !== lessonId));
   }
 }

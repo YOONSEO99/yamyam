@@ -118,6 +118,67 @@
   }
 }
 
+.lesson-row-action-btns {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 76px;
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    box-sizing: border-box;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: inherit;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+  }
+
+  .action-btn--ghost {
+    background: #fff;
+    border: 1.5px solid var(--gray-3);
+    color: var(--text-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--gray-1);
+    }
+  }
+
+  .action-btn--outline {
+    background: transparent;
+    border: 1.5px solid var(--yam);
+    color: var(--yam);
+
+    &:hover:not(:disabled) {
+      background: var(--yam-light);
+    }
+  }
+
+  .action-btn--danger {
+    background: #fff;
+    border: 1.5px solid #e59999;
+    color: #c92a2a;
+
+    &:hover:not(:disabled) {
+      background: #fff5f5;
+      border-color: #c92a2a;
+    }
+  }
+}
+
 .badge {
   padding: 4px 8px;
   border-radius: 4px;
@@ -135,13 +196,3 @@
   }
 }
 
-.btn-outline {
-  border: 1px solid var(--gray-3);
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  &:hover {
-    background: var(--gray-1);
-  }
-}

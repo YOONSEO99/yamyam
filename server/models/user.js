@@ -51,6 +51,12 @@ const userSchema = new mongoose.Schema(
         type: [String],
       },
     ],
+    enrolledLessonIds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Lesson",
+      },
+    ],
     deletedAt: {
       type: Date,
       default: null,

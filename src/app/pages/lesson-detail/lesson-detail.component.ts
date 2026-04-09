@@ -53,6 +53,41 @@ export class LessonDetailComponent implements OnInit {
     return this.auth.currentUser()?._id === instId;
   }
 
+  get isEnrolled(): boolean {
+    const l = this.lesson();
+    const uid = this.auth.currentUser()?._id;
+    if (!l || !uid) return false;
+    const ids = this.auth.currentUser()?.enrolledLessonIds ?? [];
+    return ids.includes(l._id);
+  }
+
+  get canEnroll(): boolean {
+    const l = this.lesson();
+    if (!l || !this.auth.isLoggedIn() || this.isOwner) return false;
+    if (this.isEnrolled) return false;
+    const s = l.status ?? 'active';
+    return s !== 'draft';
+  }
+
+  enrollPending = signal(false);
+
+  enroll() {
+    const l = this.lesson();
+    const uid = this.auth.currentUser()?._id;
+    if (!l || !uid || !this.canEnroll) return;
+    this.enrollPending.set(true);
+    this.lessonService.enrollInLesson(l._id, uid).subscribe({
+      next: (res) => {
+        this.auth.patchCurrentUser({ enrolledLessonIds: res.enrolledLessonIds });
+        this.enrollPending.set(false);
+      },
+      error: (err) => {
+        console.error('Enroll failed:', err);
+        this.enrollPending.set(false);
+      }
+    });
+  }
+
   instructorFromLesson(lesson: Lesson): User | undefined {
     const id = lesson.instructorId;
     return typeof id === 'object' ? id : undefined;

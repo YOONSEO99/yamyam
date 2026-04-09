@@ -12,6 +12,7 @@ export interface User {
   isAdmin?: boolean;
   role?: string;
   favoriteLessonIds?: string[];
+  enrolledLessonIds?: string[];
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string;

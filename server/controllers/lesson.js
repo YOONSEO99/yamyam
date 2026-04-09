@@ -1,6 +1,12 @@
 const Lesson = require("../models/lesson");
 const User = require("../models/user");
 
+/** Catalogue & enrolled lists: treat draft as non-public */
+function isPublicLessonStatus(status) {
+  if (status === "draft") return false;
+  return true;
+}
+
 exports.getAllLessons = async (req, res) => {
   try {
     const { keyword, category } = req.query;
@@ -14,7 +20,8 @@ exports.getAllLessons = async (req, res) => {
     }
 
     const lessons = await Lesson.find(searchQuery);
-    res.status(200).json(lessons);
+    const publicOnly = lessons.filter((l) => isPublicLessonStatus(l.status));
+    res.status(200).json(publicOnly);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -36,18 +43,102 @@ exports.getLessonById = async (req, res) => {
   }
 };
 
-exports.getMyLessons = async (req, res) => {
+/** Logged-in dashboard: enrolled (public) lessons + all lessons this user teaches */
+exports.getMyDashboardLessons = async (req, res) => {
   try {
-    const { instructorId } = req.query;
-    let query = {};
-    if (instructorId) {
-      query = { instructorId: instructorId };
+    const { userId } = req.query;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
     }
-    const lessons = await Lesson.find(query).sort({ createdAt: -1 });
-    console.log(
-      `[GET] Lessons fetched. Filter by instructor: ${instructorId || "None"}`,
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const enrolledIds = user.enrolledLessonIds || [];
+
+    const enrolledLessons =
+      enrolledIds.length > 0
+        ? await Lesson.find({
+            _id: { $in: enrolledIds },
+            deletedAt: null,
+          })
+        : [];
+
+    const enrolledPublic = enrolledLessons.filter((l) =>
+      isPublicLessonStatus(l.status),
     );
-    res.status(200).json(lessons);
+
+    const teachingLessons = await Lesson.find({
+      instructorId: userId,
+      deletedAt: null,
+    }).sort({ createdAt: -1 });
+
+    const byId = new Map();
+    for (const l of teachingLessons) {
+      byId.set(l._id.toString(), l);
+    }
+    for (const l of enrolledPublic) {
+      byId.set(l._id.toString(), l);
+    }
+
+    const merged = Array.from(byId.values()).sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+    );
+
+    res.status(200).json(merged);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.enrollInLesson = async (req, res) => {
+  try {
+    const { id: lessonId } = req.params;
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson || lesson.deletedAt) {
+      return res.status(404).json({ message: "Lesson not found" });
+    }
+    if (!isPublicLessonStatus(lesson.status)) {
+      return res
+        .status(400)
+        .json({ message: "This class is not open for enrollment" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.enrolledLessonIds) {
+      user.enrolledLessonIds = [];
+    }
+
+    const already = user.enrolledLessonIds.some(
+      (lid) => lid.toString() === lessonId,
+    );
+    if (already) {
+      return res.status(200).json({
+        message: "Already enrolled",
+        enrolledLessonIds: user.enrolledLessonIds.map((x) => x.toString()),
+      });
+    }
+
+    user.enrolledLessonIds.push(lesson._id);
+    user.markModified("enrolledLessonIds");
+    await user.save();
+
+    res.status(200).json({
+      message: "Enrolled successfully",
+      enrolledLessonIds: user.enrolledLessonIds.map((x) => x.toString()),
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -75,6 +166,19 @@ exports.updateLesson = async (req, res) => {
 
 exports.deleteLesson = async (req, res) => {
   try {
+    const { userId } = req.query;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    const lesson = await Lesson.findById(req.params.id);
+    if (!lesson) {
+      return res.status(404).json({ message: "Lesson not found" });
+    }
+    if (lesson.instructorId.toString() !== String(userId)) {
+      return res
+        .status(403)
+        .json({ message: "Only the lesson owner can delete this lesson" });
+    }
     await Lesson.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Lesson deleted successfully" });
   } catch (error) {
@@ -119,7 +223,6 @@ exports.toggleFavourite = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not Found" });
     }
-    console.log("user.favoriteLessonIds :: ", user.favoriteLessonIds);
 
     if (!user.favoriteLessonIds) {
       user.favoriteLessonIds = [];
