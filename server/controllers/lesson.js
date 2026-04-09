@@ -1,7 +1,6 @@
 const Lesson = require("../models/lesson");
 const User = require("../models/user");
 
-/** Catalogue & enrolled lists: treat draft as non-public */
 function isPublicLessonStatus(status) {
   if (status === "draft") return false;
   return true;
@@ -19,7 +18,10 @@ exports.getAllLessons = async (req, res) => {
       searchQuery.title = { $regex: keyword, $options: "i" };
     }
 
-    const lessons = await Lesson.find(searchQuery);
+    const lessons = await Lesson.find(searchQuery).populate(
+      "instructorId",
+      "nickname bio",
+    );
     const publicOnly = lessons.filter((l) => isPublicLessonStatus(l.status));
     res.status(200).json(publicOnly);
   } catch (error) {
@@ -43,7 +45,6 @@ exports.getLessonById = async (req, res) => {
   }
 };
 
-/** Logged-in dashboard: enrolled (public) lessons + all lessons this user teaches */
 exports.getMyDashboardLessons = async (req, res) => {
   try {
     const { userId } = req.query;

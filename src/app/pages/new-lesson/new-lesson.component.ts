@@ -43,4 +43,33 @@ export class NewLessonComponent {
         error: () => alert('Fail to create the lesson. Please try again.')
       });
   }
+  thumbnailFile: File | null = null;
+  thumbnailPreview: string | null = null;
+
+  onFileChange(e: Event) {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    this.setFile(file);
+  }
+
+  onDrop(e: DragEvent) {
+    e.preventDefault();
+    const file = e.dataTransfer?.files?.[0];
+    this.setFile(file);
+  }
+
+  private setFile(file: File | undefined) {
+    if (!file) return;
+    if (!['image/png', 'image/jpeg'].includes(file.type)) {
+      alert('PNG or JPG only.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File must be under 5MB.');
+      return;
+    }
+    this.thumbnailFile = file;
+    const reader = new FileReader();
+    reader.onload = () => this.thumbnailPreview = reader.result as string;
+    reader.readAsDataURL(file);
+  }
 }

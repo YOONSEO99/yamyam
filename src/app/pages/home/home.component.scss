@@ -21,7 +21,7 @@ main {
 }
 
 .hero-left {
-  //padding: 64px 40px 56px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -207,7 +207,7 @@ main {
   gap: 20px;
   align-items: stretch;
 
-  >* {
+  > * {
     min-width: 0;
   }
 }
@@ -291,7 +291,6 @@ main {
   }
 
   .hero-headline {
-
     .line-1,
     .line-2,
     .line-3 {

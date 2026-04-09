@@ -23,6 +23,7 @@ export class LessonCardComponent {
   }
 
   get instructor(): User | undefined {
+
     const id = this.lesson.instructorId;
     return typeof id === 'object' ? id : undefined;
   }

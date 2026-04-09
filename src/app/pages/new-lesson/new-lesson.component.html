@@ -100,10 +100,28 @@
 
       <div class="form-group">
         <label>Thumbnail</label>
-        <div class="upload-zone">
-          <div class="upload-icon">📁</div>
-          <p>Drag & drop or <span>browse</span></p>
-          <span class="upload-hint">PNG, JPG up to 5MB</span>
+        <div
+          class="upload-zone"
+          [class.has-file]="thumbnailFile"
+          (click)="fileInput.click()"
+          (dragover)="$event.preventDefault()"
+          (drop)="onDrop($event)"
+        >
+          <input
+            #fileInput
+            type="file"
+            accept="image/png, image/jpeg"
+            style="display: none"
+            (change)="onFileChange($event)"
+          />
+          @if (thumbnailPreview) {
+            <img [src]="thumbnailPreview" class="thumb-preview" />
+            <span class="upload-hint">{{ thumbnailFile?.name }}</span>
+          } @else {
+            <div class="upload-icon">📁</div>
+            <p>Drag & drop or <span>browse</span></p>
+            <span class="upload-hint">PNG, JPG up to 5MB</span>
+          }
         </div>
       </div>
 
