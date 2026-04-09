@@ -15,6 +15,14 @@ export class AuthService {
     if (stored) this.currentUser.set(JSON.parse(stored));
   }
 
+    setSessionTimeout() {
+    if (this.sessionTimeout) clearTimeout(this.sessionTimeout);
+    this.sessionTimeout = setTimeout(() => {
+      alert('Session expired. Plese login again');
+      this.logout();
+    }, 3600000);
+  }
+
   register(data: { email: string; password: string; nickname: string; role: string }) {
     return this.http.post<AuthResponse>(`${this.API}/auth/register`, data).pipe(
       tap(res => this.storeAuth(res))
@@ -34,13 +42,7 @@ export class AuthService {
     this.router.navigate(['/']);
   }
 
-  setSessionTimeout() {
-    if (this.sessionTimeout) clearTimeout(this.sessionTimeout);
-    this.sessionTimeout = setTimeout(() => {
-      alert('Session expired. Plese login again');
-      this.logout();
-    }, 3600000);
-  }
+
 
   private storeAuth(res: AuthResponse) {
     localStorage.setItem('token', res.token);
